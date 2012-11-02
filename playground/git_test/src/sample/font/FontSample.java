@@ -24,7 +24,7 @@ public class FontSample extends Frame {
 			}
 		});
 		
-		MY_FONT = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/sample/font/Herculanum.ttf"));
+		MY_FONT = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/sample/font/gtw.ttf"));
 	}
 	
 	@Override
@@ -35,7 +35,7 @@ public class FontSample extends Frame {
 		int visibleWidth = bounds.width - getInsets().left - getInsets().right;
 		
 		float xratio = visibleHeight / 1.5f;
-		float yratio = visibleWidth / 8.0f;
+		float yratio = visibleWidth / 9.0f;
 		
 		float ratio = Math.min(xratio, yratio);
 		
@@ -43,7 +43,7 @@ public class FontSample extends Frame {
 		
 		g.setFont(f);
 		g.drawString(SPRUCH, 
-				getInsets().left + visibleWidth / 2 - (int) (ratio * 3.8),
+				getInsets().left + visibleWidth / 2 - (int) (ratio * 4.3),
 				getInsets().top + visibleHeight / 2 + (int) (ratio / 3.8));
 	} 
 
