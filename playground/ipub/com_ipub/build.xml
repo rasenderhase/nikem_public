@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     30.05.2012 20:54:28                                                        
+
+     com_ipub    
+     
+                   
+     andreas                                                                
+     ====================================================================== -->
+<project name="com_ipub" default="default">
+	<target name="module_xml">
+		<path id="basedir" location="."></path>
+		<fileset id="files" dir="./site" includes="*">
+		</fileset>
+		<pathconvert dirsep="/" pathsep="&lt;/filename&gt;&#10;&#09;&#09;&lt;filename&gt;" property="tmpFiles" refid="files">
+			<map from="${basedir}/site/" to=""/>
+		</pathconvert>
+		<property name="files" value="&lt;filename&gt;${tmpFiles}&lt;/filename&gt;"/>
+		<echo message="${files}"/>
+		
+		<fileset id="adminFiles" dir="./admin" includes="*">
+		</fileset>
+		<pathconvert dirsep="/" pathsep="&lt;/filename&gt;&#10;&#09;&#09;&#09;&lt;filename&gt;" property="tmpAdminFiles" refid="adminFiles">
+			<map from="${basedir}/admin/" to=""/>
+		</pathconvert>
+		<property name="adminFiles" value="&lt;filename&gt;${tmpAdminFiles}&lt;/filename&gt;"/>
+		<echo message="${adminFiles}"/>
+		
+		<filter token="files" value="${files}"/>
+		<filter token="adminFiles" value="${adminFiles}"/>
+		<copy file="ipub.tmpl.xml" tofile="ipub.xml" filtering="true" overwrite="true"/>
+	</target>
+	
+    <target name="default" depends="module_xml" description="">
+    	<zip destfile="com_ipub.zip" basedir="." includes="**/*">
+    		<exclude name="ipub.tmpl.xml" />
+    		<exclude name="build.xml" />
+    		<exclude name="com_ipub.zip" />
+    		<exclude name=".*" />
+    		<exclude name=".*/" />
+    	</zip>
+    </target>
+</project>
