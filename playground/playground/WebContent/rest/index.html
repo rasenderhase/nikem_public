@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>REST test</title>
+</head>
+<body>
+	<button id="post">POST</button><button id="multiparrt_post">Multipart POST</button>
+</body>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script>
+		google.load("jquery", "1.7.0");
+		google.load("jqueryui", "1.8.16");
+		google.setOnLoadCallback(function() {
+			 var script = document.createElement("script");
+			 script.setAttribute("type", "text/javascript");
+			 script.setAttribute("src", "rest.js");
+			 document.getElementsByTagName("html")[0].appendChild(script);
+		});
+	</script>
+<script type="text/javascript" src="js/mpajax/jquery.mpAjax.js"></script>
+<script type="text/javascript" src="js/datajs/datajs-1.0.2.js"></script>
+</html>
