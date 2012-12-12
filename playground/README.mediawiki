@@ -1,0 +1,9 @@
+= Code Playground =
+
+Im Code Playground stehen einige Beispielprojekte zur Verfügung, die die Verwendung verschiedener Techniken und Tools demonstrieren.
+
+z.B.
+* Joomla Komponente
+* OAuth 2.0 mit Google
+* MVC mit jQuery
+* nikem JDBC Utility
