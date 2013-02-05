@@ -70,7 +70,7 @@ StapelIljig.prototype = Object.create(k.Stapel.prototype, {
 });
 
 GeberIljig = function () {
-}
+};
 
 GeberIljig.prototype = Object.create(Object.prototype, {
     SPIELER_ANZAHL_KARTEN : {
@@ -91,9 +91,9 @@ GeberIljig.prototype = Object.create(Object.prototype, {
             var k = 0, i, s,
                 kartenspiel = new KartenspielIljig(),
                 karten,
-                gemischteKarten = [], mischen;
+                gemischteKarten, mischen;
 
-            mischen = function (/* Karte */ a, /* Karte */ b) {
+            mischen = function () {
                 return Math.random() - 0.5;
             };
 
@@ -150,8 +150,6 @@ HandSorterIljig.prototype = Object.create(k.HandSorter.prototype, {
                 weight = weightMap[farbe];
                 weight = weight + weightMap[karte.wert];
             }
-
-            console.log("" + karte.toString() + " - " + weight);
 
             return weight;
         }
