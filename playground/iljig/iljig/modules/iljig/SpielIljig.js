@@ -48,6 +48,13 @@ SpielIljig.prototype = Object.create(Object.prototype, {
     },
     addSpieler : {
         value : function(/* Spieler */ spieler) {
+            if (this.status !== this.STATUS.angelegt) {
+                throw {
+                    name : "SpielLaeuftSchon",
+                    message : "Es können keine weiteren Spieler mehr teilnehmen."
+                }
+            }
+
             if (this.spieler.length < k.GeberIljig.SPIELER_ANZAHL_KARTEN.maxAnzahl) {
 
             } else {
@@ -65,7 +72,7 @@ SpielIljig.prototype = Object.create(Object.prototype, {
             return {
                 id : this.id,
                 status : this.status,
-                trump : this.trumpf,
+                trumpf : this.trumpf,
                 spielerNummerAnDerReihe : this.spielerNummerAnDerReihe,
                 anzahlSpieler : this.anzahlSpieler
             }

@@ -3,10 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="76c8f44c-4b03-45d2-a131-f8651c8ebb51" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/Util.js" afterPath="$PROJECT_DIR$/modules/Util.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/iljig/DBService.js" afterPath="$PROJECT_DIR$/modules/iljig/DBService.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/Kartenspiel.js" afterPath="$PROJECT_DIR$/modules/Kartenspiel.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/iljig/SpielIljig.js" afterPath="$PROJECT_DIR$/modules/iljig/SpielIljig.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
     </list>
     <ignored path="iljig.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,10 +33,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Kartenspiel.js" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="Kartenspiel.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/modules/Kartenspiel.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="0" selection-start="295" selection-end="295" vertical-scroll-proportion="0.0">
+            <state line="116" column="28" selection-start="2767" selection-end="2767" vertical-scroll-proportion="0.92783505">
               <folding />
             </state>
           </provider>
@@ -56,7 +54,7 @@
       <file leaf-file-name="SpielIljig.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/modules/iljig/SpielIljig.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="65" column="29" selection-start="2272" selection-end="2272" vertical-scroll-proportion="0.0">
+            <state line="25" column="0" selection-start="1118" selection-end="1146" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -73,10 +71,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DBService.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="DBService.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/modules/iljig/DBService.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="53" selection-start="909" selection-end="909" vertical-scroll-proportion="0.25773194">
+            <state line="49" column="3" selection-start="1307" selection-end="1307" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -108,12 +106,12 @@
         <option value="$PROJECT_DIR$/modules/iljig/GeberIljig.js" />
         <option value="$PROJECT_DIR$/modules/Spieler.js" />
         <option value="$PROJECT_DIR$/modules/Karte.js" />
-        <option value="$PROJECT_DIR$/modules/Kartenspiel.js" />
         <option value="$PROJECT_DIR$/modules/iljig/KartenspielIljig.js" />
         <option value="$PROJECT_DIR$/modules/Util.js" />
         <option value="$PROJECT_DIR$/server.js" />
-        <option value="$PROJECT_DIR$/modules/iljig/SpielIljig.js" />
         <option value="$PROJECT_DIR$/modules/iljig/DBService.js" />
+        <option value="$PROJECT_DIR$/modules/iljig/SpielIljig.js" />
+        <option value="$PROJECT_DIR$/modules/Kartenspiel.js" />
       </list>
     </option>
   </component>
@@ -340,18 +338,22 @@
       <created>1360794611023</created>
       <updated>1360794611023</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="...">
+      <created>1360795881179</created>
+      <updated>1360795881179</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="132" y="22" width="1404" height="883" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.328084" sideWeight="0.4916727" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32876712" sideWeight="0.48298335" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21361332" sideWeight="0.46981627" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21361332" sideWeight="0.19291338" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21361332" sideWeight="0.19291338" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39878234" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21361332" sideWeight="0.21765602" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.328084" sideWeight="0.09268646" order="7" side_tool="true" content_ui="tabs" />
@@ -487,33 +489,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/Kartenspiel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="0" selection-start="295" selection-end="295" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/modules/iljig/KartenspielIljig.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="74" column="10" selection-start="1965" selection-end="1975" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/modules/Util.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="35" column="25" selection-start="927" selection-end="927" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="e#0#158#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="19" selection-start="1024" selection-end="1024" vertical-scroll-proportion="0.0">
-          <folding />
         </state>
       </provider>
     </entry>
@@ -526,16 +507,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/modules/iljig/SpielIljig.js">
+    <entry file="file://$PROJECT_DIR$/server.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="29" selection-start="2272" selection-end="2272" vertical-scroll-proportion="0.0">
+        <state line="40" column="19" selection-start="1024" selection-end="1024" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/modules/iljig/DBService.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="53" selection-start="909" selection-end="909" vertical-scroll-proportion="0.25773194">
+        <state line="49" column="3" selection-start="1307" selection-end="1307" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/iljig/KartenspielIljig.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="74" column="10" selection-start="1965" selection-end="1975" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/iljig/SpielIljig.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="0" selection-start="1118" selection-end="1146" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/Kartenspiel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="116" column="28" selection-start="2767" selection-end="2767" vertical-scroll-proportion="0.92783505">
           <folding />
         </state>
       </provider>

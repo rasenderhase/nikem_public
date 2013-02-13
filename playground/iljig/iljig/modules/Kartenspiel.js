@@ -6,7 +6,9 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var Karte, Kartenspiel, Spieler, Stapel, HandSorter;
+var Karte, Kartenspiel, Spieler, Stapel, HandSorter, u;
+
+u = require("./Util.js");
 
 Karte = function(farbe, wert) {
     this.farbe = farbe;
@@ -84,6 +86,7 @@ Kartenspiel.prototype = Object.create(Object.prototype, {
 
 Spieler = function(name) {
     this.name = name;
+    this.id = u.Util.uuid();
 };
 
 Spieler.prototype = Object.create(Object.prototype, {
@@ -105,6 +108,14 @@ Spieler.prototype = Object.create(Object.prototype, {
                 function () {
                     return that.handSorter.sortFunction.apply(that.handSorter, arguments);
                 });
+        }
+    },
+    toJSON : {
+        value : function () {
+            return {
+                name : this.name,
+                id : this.id
+            }
         }
     }
 });
