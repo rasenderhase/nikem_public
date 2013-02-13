@@ -75,6 +75,8 @@ GeberIljig = function () {
 GeberIljig.prototype = Object.create(Object.prototype, {
     SPIELER_ANZAHL_KARTEN : {
         value : {
+            minAnzahl : 2,
+            maxAnzahl : 10,
             2 : 7,
             3 : 7,
             4 : 7,
