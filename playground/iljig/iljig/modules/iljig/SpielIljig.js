@@ -22,13 +22,15 @@
 
 
 var SpielIljig, k, u;
-k = require("./../Kartenspiel.js");
+k = require("./KartenspielIljig.js");
 u = require("./../Util.js");
 
-SpielIljig = function (id) {
-    this.id = id || u.Util.uuid();
+SpielIljig = function () {
+    this.id = u.Util.uuid();
     this.status = this.STATUS.angelegt;
-    this.trumpf;
+    this.trumpf = null;
+    this.spielerNummerAnDerReihe = null;
+    this.anzahlSpieler = 0;
 
     this.stapel = new k.StapelIljig();
     this.tisch = null;      //TODO Tisch programmieren
@@ -55,6 +57,18 @@ SpielIljig.prototype = Object.create(Object.prototype, {
                 }
             }
             this.spieler.push(spieler);
+            this.anzahlSpieler++;
+        }
+    },
+    toJSON : {
+        value : function() {
+            return {
+                id : this.id,
+                status : this.status,
+                trump : this.trumpf,
+                spielerNummerAnDerReihe : this.spielerNummerAnDerReihe,
+                anzahlSpieler : this.anzahlSpieler
+            }
         }
     }
 });

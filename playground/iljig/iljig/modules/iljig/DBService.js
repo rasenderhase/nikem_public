@@ -14,10 +14,10 @@
  * spielerStich -- 1:n -- spielerStichkarten (von einem Spieler in einem Stich gespielte Karten)
  */
 
-var DBService, s;
+var DbService, s;
 s = require("./SpielIljig.js");
 
-DBService = function() {
+DbService = function() {
     this.db = {
         spiel : {},
         spieler : {},
@@ -28,22 +28,16 @@ DBService = function() {
     };
 };
 
-DBService.prototype = Object.create(Object.prototype, {
+DbService.prototype = Object.create(Object.prototype, {
     saveSpiel : {
         value : function(/* SpielIljig */ spiel) {
-            this.db.spiel[spiel.id] = {
-                id : spiel.id,
-                status : spiel.status,
-                trumpf : spiel.trumpf,
-                spielerNummerAnDerReihe : spiel.spielerNummerAnDerReihe,
-                anzahlSpieler : spiel.anzahlSpieler
-            }
+            this.db.spiel[spiel.id] = spiel.toJSON();
         }
     },
     getSpiel : {
         value : function(/* String */ id) {
             var spiel;
-            spiel = Object.create(s.SpielIljig.prototype);  //Instanziierung ohne Konstruktor
+            spiel = new s.SpielIljig();
             spiel.extend(this.db.spiel[id]);                //Persistierte Daten überbraten
             return spiel;
         }
@@ -54,3 +48,5 @@ DBService.prototype = Object.create(Object.prototype, {
         }
     }
 });
+
+exports.DbService = DbService;

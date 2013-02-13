@@ -33,4 +33,4 @@ Object.defineProperty(Object.prototype, "extend", {
     }
 });
 
-exports.Util = Util;
+exports.Util = new Util();
