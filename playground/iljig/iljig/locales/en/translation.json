@@ -1,0 +1,12 @@
+{
+    "app": {
+        "name": "iljig"
+    },
+    "creator": {
+        "firstname": "Andreas",
+        "lastname": "Knees"
+    },
+    "home" : {
+        "neuesSpiel" : "new game"
+    }
+}

@@ -7,15 +7,34 @@
  */
 
 
-var express = require("express");
-var app = express();
+var express = require("express"),
+    exphbs  = require("express3-handlebars"),
+    i18n = require("i18next");
 
+var app = express();
+i18n.init({supportedLngs: ['en', 'de']});
+
+app.engine("handlebars", exphbs({
+    defaultLayout: "main",
+    helpers : {
+        t : i18n.t
+    }
+}));
+app.set("view engine", "handlebars");
+
+app.use(i18n.handle);
 app.use(express.favicon(__dirname + "/public/images/icon.png"));
 app.use(express.static(__dirname + "/public"));
 
-app.get("/hello.txt", function(req, res){
-    res.send("Hello World");
+i18n.registerAppHelper(app);    //Register AppHelper so you can use the translate function inside template
+
+
+app.get("/", function (req, res, next) {
+    res.render("home");
 });
+
+
+
 
 app.listen(3000);
 console.log("Listening on port 3000");
