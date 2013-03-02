@@ -35,7 +35,7 @@ exports.create = function(req, res, next){
 
     spiel = req.spiel;
     if (!spiel) {
-        spiel = new s.SpielIljig(id, maxanzahlSpieler);
+        spiel = new s.SpielIljig(id);
         dbService.saveSpiel(spiel);
         res.status(201);
         req.spiel = spiel;

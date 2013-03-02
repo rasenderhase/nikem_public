@@ -25,7 +25,7 @@ var SpielIljig, k, u;
 u = require("../Util.js").Util;
 k = require("./KartenspielIljig.js");
 
-SpielIljig = function (id, maxanzahlSpieler) {
+SpielIljig = function (id) {
     var id = id || u.uuid();
     this.id = id;
     this.teilnahmeGeheimnis = u.uuid();
@@ -33,7 +33,6 @@ SpielIljig = function (id, maxanzahlSpieler) {
     this.trumpf = null;
     this.spielerNummerAnDerReihe = null;
     this.anzahlSpieler = 0;
-    this.maxanzahlSpieler = maxanzahlSpieler;
 
     this.stapel = new k.StapelIljig();
     this.tisch = null;      //TODO Tisch programmieren
@@ -58,12 +57,12 @@ SpielIljig.prototype = Object.create(Object.prototype, {
                 }
             }
 
-            if (this.spieler.length < this.maxanzahlSpieler) {
+            if (this.spieler.length < k.GeberIljig.SPIELER_ANZAHL_KARTEN.maxAnzahl) {
 
             } else {
                 throw {
                     name : "ZuVieleSpieler",
-                    message : "Es sind höchstens " + this.maxanzahlSpieler + " Spieler erlaubt."
+                    message : "Es sind höchstens " + k.GeberIljig.SPIELER_ANZAHL_KARTEN.maxAnzahl + " Spieler erlaubt."
                 }
             }
             this.spieler.push(spieler);
@@ -77,8 +76,17 @@ SpielIljig.prototype = Object.create(Object.prototype, {
                 status : this.status,
                 trumpf : this.trumpf,
                 spielerNummerAnDerReihe : this.spielerNummerAnDerReihe,
-                anzahlSpieler : this.anzahlSpieler,
-                maxanzahlSpieler : this.maxanzahlSpieler
+            }
+        }
+    },
+    toDb : {
+        value : function() {
+            return {
+                id : this.id,
+                status : this.status,
+                trumpf : this.trumpf,
+                teilnahmeGeheimnis : this.teilnahmeGeheimnis,
+                spielerNummerAnDerReihe : this.spielerNummerAnDerReihe,
             }
         }
     }
