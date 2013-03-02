@@ -58,7 +58,16 @@ exports.view = function(req, res){
 exports.list = function(req, res) {
     var spielList = dbService.getSpielList();
 
-    res.render("spiellist", {
-        spielList : spielList
+    res.format({
+        html : function() {
+            res.render("spiellist", {
+                spielList : spielList
+            });
+        },
+        json : function() {
+            res.json(JSON.stringify(spielList));
+        }
     });
+
+
 };
