@@ -31,7 +31,7 @@ DbService = function() {
 DbService.prototype = Object.create(Object.prototype, {
     saveSpiel : {
         value : function(/* SpielIljig */ spiel) {
-            this.db.spiel[spiel.id] = spiel.toJSON();
+            this.db.spiel[spiel.id] = spiel.toDb();
         }
     },
     getSpiel : {
