@@ -1,1 +1,23 @@
-<h1>Iljig: {{t "home.neuesSpiel"}}</h1>
+<h1>{{t "home.ueberschrift"}}</h1>
+
+<form action="spiel/{{spiel.id}}" method="post">
+    <ul>
+        <li>
+            <label for="spiel_anzahlSpieler">{{t "home.anzahlSpieler"}}</label>
+            <select id="spiel_anzahlSpieler" name="spiel_anzahlSpieler">
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+        </li>
+
+    </ul>
+
+    <button type="submit">{{t "home.neuesSpiel"}}</button>
+</form>

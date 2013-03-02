@@ -7,6 +7,8 @@
         "lastname": "Knees"
     },
     "home" : {
-        "neuesSpiel" : "neues Spiel"
+        "neuesSpiel" : "neues Spiel",
+        "anzahlSpieler" : "Wieviele Spieler?",
+        "ueberschrift" : "Iljig: ein mongolisches Kartenspiel"
     }
 }

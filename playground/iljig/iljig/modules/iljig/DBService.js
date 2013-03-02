@@ -36,10 +36,26 @@ DbService.prototype = Object.create(Object.prototype, {
     },
     getSpiel : {
         value : function(/* String */ id) {
-            var spiel;
-            spiel = new s.SpielIljig();
-            spiel.extend(this.db.spiel[id]);                //Persistierte Daten überbraten
+            var spiel = null;
+            if (this.db.spiel[id]) {
+                spiel = new s.SpielIljig();
+                spiel.extend(this.db.spiel[id]);                //Persistierte Daten überbraten
+            }
             return spiel;
+        }
+    },
+    getSpielList : {
+        value : function() {
+            var i, list = [], spiel;
+
+            for (i in this.db.spiel) {
+                if (this.db.spiel.hasOwnProperty(i)) {
+                    spiel = new s.SpielIljig();
+                    spiel.extend(this.db.spiel[i]);
+                    list.push(spiel);
+                }
+            }
+            return list;
         }
     },
     deleteSpiel : {
@@ -49,4 +65,4 @@ DbService.prototype = Object.create(Object.prototype, {
     }
 });
 
-exports.DbService = DbService;
+exports.dbService = new DbService();

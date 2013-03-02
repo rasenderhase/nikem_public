@@ -10,15 +10,16 @@
 
 var k = require("./modules/iljig/KartenspielIljig.js"),
     s = require("./modules/iljig/SpielIljig.js"),
-    d = require("./modules/iljig/DBService.js");
+    d = require("./modules/iljig/DBService.js"),
+    u = require("./modules/Util.js");
 
 var stapel = new k.StapelIljig();
 
 var andi = new k.Spieler("andi");
 var martin = new k.Spieler("martin");
 
-var spiel = new s.SpielIljig();
-var dbService = new d.DbService();
+var spiel = new s.SpielIljig(u.Util.uuid());
+var dbService = d.dbService;
 
 new k.GeberIljig().gib(stapel, [ andi, martin ]);
 

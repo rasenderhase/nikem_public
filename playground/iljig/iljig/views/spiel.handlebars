@@ -1,0 +1,11 @@
+    <ul>
+        <li>Spiel: {{spiel.id}}</li>
+        <li>Status: {{spiel.status}}</li>
+        <li>Anzahl Spieler: {{spiel.maxanzahlSpieler}}</li>
+        <li>angemeldete Spieler: {{spiel.anzahlSpieler}}</li>
+    </ul>
+        <a href="{{spiel.id}}">Link für Zuschauer</a>
+        {{#if teilnahmeGeheimnis}}
+        <a href="{{teilnahmeGeheimnis}}">Ich nehme selbst am Spiel teil!</a>
+        <a href="mailto:?subject=Einladung zum Iljig spielen&body=Link zum Mitspielen: {{teilnahmeGeheimnis}}">Lade deine Freunde ein!</a>
+        {{/if}}

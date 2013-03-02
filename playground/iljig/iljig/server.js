@@ -9,9 +9,13 @@
 
 var express = require("express"),
     exphbs  = require("express3-handlebars"),
-    i18n = require("i18next");
+    i18n = require("i18next"),
+    u = require("./modules/Util.js"),
+    d = require("./modules/iljig/DBService.js"),
+    spiel = require("./modules/resources/spiel.js"),
 
-var app = express();
+    app = express();
+
 i18n.init({supportedLngs: ['en', 'de']});
 
 app.engine("handlebars", exphbs({
@@ -23,18 +27,19 @@ app.engine("handlebars", exphbs({
 app.set("view engine", "handlebars");
 
 app.use(i18n.handle);
+app.use(express.bodyParser());
 app.use(express.favicon(__dirname + "/public/images/icon.png"));
 app.use(express.static(__dirname + "/public"));
 
 i18n.registerAppHelper(app);    //Register AppHelper so you can use the translate function inside template
 
+app.get("/", spiel.home);
 
-app.get("/", function (req, res, next) {
-    res.render("home");
-});
+app.get("/spiel", spiel.list);
 
-
-
+app.all("/spiel/:spiel_id", spiel.load);
+app.post("/spiel/:spiel_id", spiel.create);
+app.all("/spiel/:spiel_id", spiel.view);
 
 app.listen(3000);
 console.log("Listening on port 3000");
