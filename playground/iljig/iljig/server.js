@@ -1,41 +1,21 @@
 /**
  * Created with JetBrains WebStorm.
  * User: andreas
- * Date: 12.01.13
- * Time: 15:09
+ * Date: 02.03.13
+ * Time: 10:21
  * To change this template use File | Settings | File Templates.
- *
- * see http://www.bennadel.com/blog/2184-Object-create-Improves-Constructor-Based-Inheritance-In-Javascript-It-Doesn-t-Replace-It.htm
  */
 
-var k = require("./modules/iljig/KartenspielIljig.js"),
-    s = require("./modules/iljig/SpielIljig.js"),
-    d = require("./modules/iljig/DBService.js");
 
-var stapel = new k.StapelIljig();
+var express = require("express");
+var app = express();
 
-var andi = new k.Spieler("andi");
-var martin = new k.Spieler("martin");
+app.use(express.favicon(__dirname + "/public/images/icon.png"));
+app.use(express.static(__dirname + "/public"));
 
-var spiel = new s.SpielIljig();
-var dbService = new d.DbService();
+app.get("/hello.txt", function(req, res){
+    res.send("Hello World");
+});
 
-new k.GeberIljig().gib(stapel, [ andi, martin ]);
-
-
-var handSorter = new k.HandSorterIljig(stapel.getTrumpf());
-andi.handSorter = handSorter;
-martin.handSorter = handSorter;
-
-andi.sortHand();
-martin.sortHand();
-
-console.log("" + stapel);
-console.log("" + andi);
-console.log("" + martin);
-
-console.dir(spiel);
-dbService.saveSpiel(spiel);
-spiel = dbService.getSpiel(spiel.id);
-
-console.dir(spiel);
+app.listen(3000);
+console.log("Listening on port 3000");
