@@ -11,40 +11,42 @@ var dbService = require("../iljig/DBService.js").dbService,
     u = require("../Util.js").Util;
 
 exports.home = function(req, res) {
-
-    //neues Spiel noch nicht persistieren...
     res.render("home", {
-        spiel : new s.SpielIljig()
+        spiel : {
+            id :u.uuid
+        }
     });
 };
 
 exports.load = function(req, res, next){
-    var id = req.param("spiel_id"),
-        spiel;
+    var id = req.param("spiel_id");
 
-    spiel = dbService.getSpiel(id);
-    req.spiel = spiel;
-    next();
+    dbService.getSpiel(id, u.handle(function (spiel) {
+        req.spiel = spiel;
+        next();
+    }));
 };
 
 exports.create = function(req, res, next){
     var id = req.param("spiel_id"),
-        maxanzahlSpieler = parseInt(req.param("spiel_anzahlSpieler"), 10),
-        spiel,
-        statusCode = 200;
+        spiel = req.spiel,
+        callback;
 
-    spiel = req.spiel;
+    callback = function() {
+        req.spiel = spiel;
+        req.teilnahmeUrl = req.protocol + "://" + req.get('host') + req.url + "?teilnahme=" + spiel.teilnahmeGeheimnis;
+
+        res.status(201);
+        res.header("location", spiel.url);
+        next();
+    };
+
     if (!spiel) {
         spiel = new s.SpielIljig(id);
-        dbService.saveSpiel(spiel);
-        res.status(201);
-        req.spiel = spiel;
+        dbService.saveSpiel(spiel, u.handle(callback));
+    } else {
+        callback(null);
     }
-
-    req.teilnahmeUrl = req.protocol + "://" + req.get('host') + req.url + "?teilnahme=" + spiel.teilnahmeGeheimnis;
-
-    res.header("location", spiel.url);
-    next();
 };
 
 exports.view = function(req, res){
@@ -56,18 +58,27 @@ exports.view = function(req, res){
 };
 
 exports.list = function(req, res) {
-    var spielList = dbService.getSpielList();
-
     res.format({
         html : function() {
-            res.render("spiellist", {
-                spielList : spielList
-            });
+            dbService.getSpielList(u.handle(function (spielList) {
+                res.render("spiellist", {
+                    spielList : spielList
+                });
+            }));
         },
         json : function() {
-            res.json(JSON.stringify(spielList));
+            dbService.getSpielList(u.handle(function (spielList) {
+                var i, json = [];
+                for (i = 0; i < spielList.length; i++) {
+                    json[i] = {
+                        id : spielList[i].id,
+                        status : spielList[i].status,
+                        trumpf : spielList[i].trumpf,
+                        spielerNummerAnDerReihe : spielList[i].spielerNummerAnDerReihe
+                    }
+                }
+                res.json(json);
+            }));
         }
     });
-
-
 };

@@ -30,37 +30,58 @@ DbService = function() {
 
 DbService.prototype = Object.create(Object.prototype, {
     saveSpiel : {
-        value : function(/* SpielIljig */ spiel) {
-            this.db.spiel[spiel.id] = spiel.toDb();
+        value : function(/* SpielIljig */ spiel, /* function */ callback) {
+            var err = null;
+            try {
+                this.db.spiel[spiel.id] = spiel.toDb();
+            } catch (e) {err = e;}
+            if (callback) callback(err);
         }
     },
     getSpiel : {
-        value : function(/* String */ id) {
-            var spiel = null;
-            if (this.db.spiel[id]) {
-                spiel = new s.SpielIljig();
-                spiel.extend(this.db.spiel[id]);                //Persistierte Daten überbraten
-            }
-            return spiel;
+        value : function(/* String */ id, /* function */ callback) {
+            var spiel,
+                err = null,
+                result = null;
+            try {
+                if (this.db.spiel[id]) {
+                    spiel = new s.SpielIljig();
+                    spiel.extend(this.db.spiel[id]);                //Persistierte Daten überbraten
+                    result = spiel;
+                }
+            } catch (e) {err = e;}
+            if (callback) callback(err, result);
+            return result;
         }
     },
     getSpielList : {
-        value : function() {
-            var i, list = [], spiel;
+        value : function(/* function */ callback) {
+            var i, list = [],
+                spiel,
+                err = null,
+                result = null;
 
-            for (i in this.db.spiel) {
-                if (this.db.spiel.hasOwnProperty(i)) {
-                    spiel = new s.SpielIljig();
-                    spiel.extend(this.db.spiel[i]);
-                    list.push(spiel);
+            try {
+                for (i in this.db.spiel) {
+                    if (this.db.spiel.hasOwnProperty(i)) {
+                        spiel = new s.SpielIljig();
+                        spiel.extend(this.db.spiel[i]);
+                        list.push(spiel);
+                    }
                 }
-            }
-            return list;
+                result = list;
+            } catch (e) {err = e;}
+            if (callback) callback(err, result);
+            return result;
         }
     },
     deleteSpiel : {
-        value : function(/* String */ id) {
-            delete this.db.spiel[id];
+        value : function(/* String */ id, /* function */ callback) {
+            var err = null;
+            try {
+                delete this.db.spiel[id];
+            } catch (e) {err = e;}
+            if (callback) callback(err);
         }
     }
 });

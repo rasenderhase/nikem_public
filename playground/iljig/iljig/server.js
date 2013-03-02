@@ -26,6 +26,7 @@ app.engine("handlebars", exphbs({
 }));
 app.set("view engine", "handlebars");
 
+app.use(express.logger('dev'));
 app.use(i18n.handle);
 app.use(express.bodyParser());
 app.use(express.favicon(__dirname + "/public/images/icon.png"));

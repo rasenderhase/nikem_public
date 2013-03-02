@@ -69,16 +69,6 @@ SpielIljig.prototype = Object.create(Object.prototype, {
             this.anzahlSpieler++;
         }
     },
-    toJSON : {
-        value : function() {
-            return {
-                id : this.id,
-                status : this.status,
-                trumpf : this.trumpf,
-                spielerNummerAnDerReihe : this.spielerNummerAnDerReihe,
-            }
-        }
-    },
     toDb : {
         value : function() {
             return {
@@ -86,7 +76,7 @@ SpielIljig.prototype = Object.create(Object.prototype, {
                 status : this.status,
                 trumpf : this.trumpf,
                 teilnahmeGeheimnis : this.teilnahmeGeheimnis,
-                spielerNummerAnDerReihe : this.spielerNummerAnDerReihe,
+                spielerNummerAnDerReihe : this.spielerNummerAnDerReihe
             }
         }
     }
