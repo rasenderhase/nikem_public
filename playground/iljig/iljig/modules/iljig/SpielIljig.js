@@ -26,9 +26,9 @@ u = require("../Util.js").Util;
 k = require("./KartenspielIljig.js");
 
 SpielIljig = function (id) {
-    var id = id || u.uuid();
-    this.id = id;
+    this.id = id || u.uuid();
     this.teilnahmeGeheimnis = u.uuid();
+    this.adminGeheimnis = u.uuid();
     this.status = this.STATUS.angelegt;
     this.trumpf = null;
     this.spielerNummerAnDerReihe = null;
@@ -76,6 +76,7 @@ SpielIljig.prototype = Object.create(Object.prototype, {
                 status : this.status,
                 trumpf : this.trumpf,
                 teilnahmeGeheimnis : this.teilnahmeGeheimnis,
+                adminGeheimnis : this.adminGeheimnis,
                 spielerNummerAnDerReihe : this.spielerNummerAnDerReihe
             }
         }

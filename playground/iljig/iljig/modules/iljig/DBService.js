@@ -83,6 +83,21 @@ DbService.prototype = Object.create(Object.prototype, {
             } catch (e) {err = e;}
             if (callback) callback(err);
         }
+    },
+    /**
+     * Default handler for function (err, result) type callbacks.
+     */
+    handle : {
+        value : function (/* function */ success, /* function */ fail) {
+            return function (err, result) {
+                if (err) {
+                    if (fail) fail(err);
+                    else throw err;
+                } else {
+                    success(result);
+                }
+            }
+        }
     }
 });
 

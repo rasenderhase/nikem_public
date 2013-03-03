@@ -4,7 +4,11 @@
         <li>angemeldete Spieler: {{spiel.anzahlSpieler}}</li>
     </ul>
         <a href="{{spiel.id}}">Link für Zuschauer</a>
-        {{#if teilnahmeGeheimnis}}
-        <a href="{{teilnahmeGeheimnis}}">Ich nehme selbst am Spiel teil!</a>
-        <a href="mailto:?subject=Einladung zum Iljig spielen&body=Link zum Mitspielen: {{teilnahmeGeheimnis}}">Lade deine Freunde ein!</a>
+        {{#if adminGeheimnis}}
+        <a href="mailto:?subject=Einladung zum Iljig spielen&body=Link zum Mitspielen: {{teilnahmeUrl}}">Lade deine Freunde ein!</a>
+        <form action="{{spiel.id}}" method="post">
+            <input type="hidden" name="adminGeheimnis" value="{{adminGeheimnis}}">
+            <input type="hidden" name="status" value="Gestartet">
+            <button type="submit">Spiel starten</button>
+        </form>
         {{/if}}

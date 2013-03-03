@@ -11,7 +11,6 @@ var express = require("express"),
     exphbs  = require("express3-handlebars"),
     i18n = require("i18next"),
     u = require("./modules/Util.js"),
-    d = require("./modules/iljig/DBService.js"),
     spiel = require("./modules/resources/spiel.js"),
 
     app = express();
@@ -39,7 +38,7 @@ app.get("/", spiel.home);
 app.get("/spiel", spiel.list);
 
 app.all("/spiel/:spiel_id", spiel.load);
-app.post("/spiel/:spiel_id", spiel.create);
+app.post("/spiel/:spiel_id", spiel.save);
 app.all("/spiel/:spiel_id", spiel.view);
 
 app.listen(3000);
