@@ -25,10 +25,10 @@ var SpielIljig, k, u;
 u = require("../Util.js").Util;
 k = require("./KartenspielIljig.js");
 
-SpielIljig = function (id) {
+SpielIljig = function (id, adminGeheimnis) {
     this.id = id || u.uuid();
     this.teilnahmeGeheimnis = u.uuid();
-    this.adminGeheimnis = u.uuid();
+    this.adminGeheimnis = adminGeheimnis || u.uuid();
     this.status = this.STATUS.angelegt;
     this.trumpf = null;
     this.spielerNummerAnDerReihe = null;

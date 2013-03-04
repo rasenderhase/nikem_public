@@ -9,13 +9,14 @@
 var dbService = require("../iljig/DBService.js").dbService,
     s = require("../iljig/SpielIljig.js"),
     u = require("../Util.js").Util,
+    url = require('url'),
     handle = dbService.handle;
 
 exports.home = function(req, res) {
-    var spielId = u.uuid();
     res.render("home", {
         spiel : {
-            id : spielId
+            id : u.uuid(),
+            adminGeheimnis :u.uuid()
         }
     });
 };
@@ -33,35 +34,46 @@ exports.load = function(req, res, next){
 
 exports.save = function(req, res, next){
     var id = req.param("spiel_id"),
+        adminGeheimnis = req.param("adminGeheimnis"),
         spiel = req.atts.spiel,
         callback;
 
     callback = function() {
-        req.atts = {
-            spiel : spiel,
-            teilnahmeUrl :req.protocol + "://" + req.get('host') + req.url + "?teilnahme=" + spiel.teilnahmeGeheimnis,
-            adminGeheimnis : spiel.adminGeheimnis
-        };
         res.header("location", spiel.url);
         next();
     };
 
     if (!spiel) {
-        spiel = new s.SpielIljig(id);
+        spiel = new s.SpielIljig(id, adminGeheimnis);
+        req.atts.spiel = spiel;
         res.status(201);
         dbService.saveSpiel(spiel, handle(callback));
-    } else {
+    } else if (adminGeheimnis === spiel.adminGeheimnis) {
         callback(null);
-    }
+    } else next("Hacker!");
 };
 
 exports.view = function(req, res){
-    var spiel = req.atts.spiel;
-    res.render("spiel", {
-        spiel : spiel,
-        teilnahmeUrl : req.atts.teilnahmeUrl,
-        adminGeheimnis : req.atts.adminGeheimnis
-    });
+    var spiel = req.atts.spiel,
+        teilnahmeGeheimnis = req.param("teilnahmeGeheimnis"),
+        adminGeheimnis = req.param("adminGeheimnis"),
+        renderOptions = {}, baseUrl;
+
+    renderOptions.spiel = spiel;
+    renderOptions.teilnahmeUrl = req.atts.teilnahmeUrl;
+    renderOptions.adminGeheimnis = req.atts.adminGeheimnis;
+    if (spiel.teilnahmeGeheimnis === teilnahmeGeheimnis) {
+        renderOptions.teilnehmer = true;
+    }
+    if (spiel.adminGeheimnis === adminGeheimnis) {
+        baseUrl = url.parse(req.url);
+        renderOptions.admin = true;
+        renderOptions.teilnehmer = true;        //Ein Admin darf auch teilnehmen...
+        renderOptions.teilnahmeUrl = req.protocol + "://" + req.get("host") + baseUrl.pathname + "?teilnahmeGeheimnis=" + spiel.teilnahmeGeheimnis;
+        renderOptions.adminUrl = "?adminGeheimnis=" + adminGeheimnis;
+    }
+
+    res.render("spiel", renderOptions);
 };
 
 exports.list = function(req, res) {
