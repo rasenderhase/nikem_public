@@ -13,10 +13,17 @@ var dbService = require("../iljig/DBService.js").dbService,
     handle = dbService.handle;
 
 exports.home = function(req, res) {
+    var spielId = u.uuid(),
+        adminGeheimnis = u.uuid();
+    res.cookie("adminGeheimnis", adminGeheimnis, {
+        path: "/spiel/" + spielId,
+//      maxAge : -1,         //Browser session cookie
+        httpOnly: true      //Cookie darf vom Client nicht angefasst werden.
+    });
     res.render("home", {
         spiel : {
-            id : u.uuid(),
-            adminGeheimnis :u.uuid()
+            id : spielId,
+            adminGeheimnis : adminGeheimnis
         }
     });
 };
@@ -56,7 +63,7 @@ exports.save = function(req, res, next){
 exports.view = function(req, res){
     var spiel = req.atts.spiel,
         teilnahmeGeheimnis = req.param("teilnahmeGeheimnis"),
-        adminGeheimnis = req.param("adminGeheimnis"),
+        adminGeheimnis = req.param("adminGeheimnis") || req.cookies.adminGeheimnis,
         renderOptions = {}, baseUrl;
 
     renderOptions.spiel = spiel;

@@ -28,6 +28,7 @@ app.set("view engine", "handlebars");
 app.use(express.logger('dev'));
 app.use(i18n.handle);
 app.use(express.errorHandler({ showStack: true, dumpExceptions: true }));
+app.use(express.cookieParser());
 app.use(express.bodyParser());
 app.use(express.favicon(__dirname + "/public/images/icon.png"));
 app.use(express.static(__dirname + "/public"));
