@@ -29,28 +29,29 @@ SpielIljig = function (id, adminGeheimnis) {
     this.id = id || u.uuid();
     this.teilnahmeGeheimnis = u.uuid();
     this.adminGeheimnis = adminGeheimnis || u.uuid();
-    this.status = this.STATUS.angelegt;
+    this.status = SpielIljig.STATUS.angelegt;
     this.trumpf = null;
     this.spielerNummerAnDerReihe = null;
     this.anzahlSpieler = 0;
+    this.lastAccess = Date.now();
 
     this.stapel = new k.StapelIljig();
     this.tisch = null;      //TODO Tisch programmieren
     this.spieler = [];
 };
 
-SpielIljig.prototype = Object.create(Object.prototype, {
-    STATUS : {
-        value : {
-            angelegt : "Angelegt",
+SpielIljig.STATUS = {
+        angelegt : "Angelegt",
             gestartet : "Gestartet",
             zug : "Zug",
             ende : "Ende"
-        }
-    },
+};
+SpielIljig.MAX_SPIEL_ALTER = 1000 * 60 * 60 * 24;   // 1 Tag
+
+SpielIljig.prototype = Object.create(Object.prototype, {
     addSpieler : {
         value : function(/* Spieler */ spieler) {
-            if (this.status !== this.STATUS.angelegt) {
+            if (this.status !== SpielIljig.STATUS.angelegt) {
                 throw {
                     name : "SpielLaeuftSchon",
                     message : "Es können keine weiteren Spieler mehr teilnehmen."
@@ -77,7 +78,8 @@ SpielIljig.prototype = Object.create(Object.prototype, {
                 trumpf : this.trumpf,
                 teilnahmeGeheimnis : this.teilnahmeGeheimnis,
                 adminGeheimnis : this.adminGeheimnis,
-                spielerNummerAnDerReihe : this.spielerNummerAnDerReihe
+                spielerNummerAnDerReihe : this.spielerNummerAnDerReihe,
+                lastAccess : this.lastAccess
             }
         }
     }

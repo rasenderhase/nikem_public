@@ -33,6 +33,7 @@ DbService.prototype = Object.create(Object.prototype, {
         value : function(/* SpielIljig */ spiel, /* function */ callback) {
             var err = null;
             try {
+                spiel.lastAccess = Date.now();
                 this.db.spiel[spiel.id] = spiel.toDb();
             } catch (e) {err = e;}
             if (callback) callback(err);
@@ -44,8 +45,10 @@ DbService.prototype = Object.create(Object.prototype, {
                 err = null,
                 result = null;
             try {
+                this.deleteAlteSpiele(s.SpielIljig.MAX_SPIEL_ALTER);
                 if (this.db.spiel[id]) {
                     spiel = new s.SpielIljig();
+                    this.db.spiel[id].lastAccess = Date.now();
                     spiel.extend(this.db.spiel[id]);                //Persistierte Daten überbraten
                     result = spiel;
                 }
@@ -62,6 +65,7 @@ DbService.prototype = Object.create(Object.prototype, {
                 result = null;
 
             try {
+                this.deleteAlteSpiele(s.SpielIljig.MAX_SPIEL_ALTER);
                 for (i in this.db.spiel) {
                     if (this.db.spiel.hasOwnProperty(i)) {
                         spiel = new s.SpielIljig();
@@ -75,11 +79,18 @@ DbService.prototype = Object.create(Object.prototype, {
             return result;
         }
     },
-    deleteSpiel : {
-        value : function(/* String */ id, /* function */ callback) {
-            var err = null;
+    deleteAlteSpiele : {
+        value : function(/* Date */ maxAlterMs, /* function */ callback) {
+            var err = null, i = null, spiel,
+                minDate = Date.now() - maxAlterMs;
             try {
-                delete this.db.spiel[id];
+                for (i in this.db.spiel) {
+                    if (this.db.spiel.hasOwnProperty(i)) {
+                        if (this.db.spiel[i].lastAccess < minDate) {
+                            delete this.db.spiel[i];
+                        }
+                    }
+                }
             } catch (e) {err = e;}
             if (callback) callback(err);
         }

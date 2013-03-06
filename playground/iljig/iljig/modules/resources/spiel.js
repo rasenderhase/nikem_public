@@ -71,16 +71,18 @@ exports.view = function(req, res){
     renderOptions.adminGeheimnis = req.atts.adminGeheimnis;
     if (spiel.teilnahmeGeheimnis === teilnahmeGeheimnis) {
         renderOptions.teilnehmer = true;
+        renderOptions.teilnahmeGeheimnis = teilnahmeGeheimnis;
     }
     if (spiel.adminGeheimnis === adminGeheimnis) {
-        baseUrl = url.parse(req.url);
+        renderOptions.teilnehmer = true;    //Ein Admin darf auch teilnehmen...
+        renderOptions.teilnahmeGeheimnis = spiel.teilnahmeGeheimnis;
+            baseUrl = url.parse(req.url);
         renderOptions.admin = true;
-        renderOptions.teilnehmer = true;        //Ein Admin darf auch teilnehmen...
         renderOptions.teilnahmeUrl = req.protocol + "://" + req.get("host") + baseUrl.pathname + "?teilnahmeGeheimnis=" + spiel.teilnahmeGeheimnis;
         renderOptions.adminUrl = "?adminGeheimnis=" + adminGeheimnis;
     }
 
-    res.render("spiel", renderOptions);
+    res.render("spiel-" + spiel.status, renderOptions);
 };
 
 exports.list = function(req, res) {
