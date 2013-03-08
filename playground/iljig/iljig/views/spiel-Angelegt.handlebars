@@ -15,7 +15,7 @@
         {{/if}}
 
         {{#if teilnehmer}}
-        <form id="teilnehmenForm" action="{{spiel.id}}/spieler/4711" method="post">
+        <form id="teilnehmenForm" action="{{spiel.id}}/spieler/{{spieler.id}}" method="post">
             <input type="hidden" name="teilnahmeGeheimnis" value="{{teilnahmeGeheimnis}}">
             <label for="spielerName">Dein Name:</label><input type="text" id="spielerName" name="spielerName">
             <button type="submit">Teilnehmen</button>

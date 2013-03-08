@@ -72,10 +72,12 @@ exports.view = function(req, res){
     if (spiel.teilnahmeGeheimnis === teilnahmeGeheimnis) {
         renderOptions.teilnehmer = true;
         renderOptions.teilnahmeGeheimnis = teilnahmeGeheimnis;
+        renderOptions.spieler = { id : u.uuid() };
     }
     if (spiel.adminGeheimnis === adminGeheimnis) {
         renderOptions.teilnehmer = true;    //Ein Admin darf auch teilnehmen...
         renderOptions.teilnahmeGeheimnis = spiel.teilnahmeGeheimnis;
+        renderOptions.spieler = { id : u.uuid() };
             baseUrl = url.parse(req.url);
         renderOptions.admin = true;
         renderOptions.teilnahmeUrl = req.protocol + "://" + req.get("host") + baseUrl.pathname + "?teilnahmeGeheimnis=" + spiel.teilnahmeGeheimnis;

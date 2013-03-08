@@ -12,6 +12,7 @@ var express = require("express"),
     i18n = require("i18next"),
     u = require("./modules/Util.js"),
     spiel = require("./modules/resources/spiel.js"),
+    spieler = require("./modules/resources/spieler.js"),
 
     app = express();
 
@@ -42,6 +43,8 @@ app.get("/spiel", spiel.list);
 app.all("/spiel/:spiel_id", spiel.load);
 app.post("/spiel/:spiel_id", spiel.save);
 app.all("/spiel/:spiel_id", spiel.view);
+
+app.post("/spiel/:spiel_id/spieler/:spieler_id", spieler.load);
 
 app.listen(3000);
 console.log("Listening on port 3000");
