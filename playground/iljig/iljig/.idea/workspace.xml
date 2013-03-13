@@ -2,19 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="76c8f44c-4b03-45d2-a131-f8651c8ebb51" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/spielSpieler.handlebars" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/views/layouts/spielSpieler.handlebars" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/modules/resources/spieler.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/layouts/main.handlebars" afterPath="$PROJECT_DIR$/views/layouts/main.handlebars" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/views/spiel-Angelegt.handlebars" afterPath="$PROJECT_DIR$/views/spiel-Angelegt.handlebars" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modules/resources/spiel.js" afterPath="$PROJECT_DIR$/modules/resources/spiel.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="iljig.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="76c8f44c-4b03-45d2-a131-f8651c8ebb51" time="1362756286462" ignored="false" />
+    <file path="/Dummy.txt" changelist="76c8f44c-4b03-45d2-a131-f8651c8ebb51" time="1363172730494" ignored="false" />
     <file path="/spiel.js" changelist="76c8f44c-4b03-45d2-a131-f8651c8ebb51" time="1362756893145" ignored="false" />
-    <file path="/server.js" changelist="76c8f44c-4b03-45d2-a131-f8651c8ebb51" time="1362756991760" ignored="false" />
+    <file path="/server.js" changelist="76c8f44c-4b03-45d2-a131-f8651c8ebb51" time="1363173621139" ignored="false" />
     <file path="/spiel.handlebars" changelist="76c8f44c-4b03-45d2-a131-f8651c8ebb51" time="1362598128718" ignored="false" />
     <file path="/SpielIljig.js" changelist="76c8f44c-4b03-45d2-a131-f8651c8ebb51" time="1362601761172" ignored="false" />
     <file path="/DBService.js" changelist="76c8f44c-4b03-45d2-a131-f8651c8ebb51" time="1362602208055" ignored="false" />
@@ -45,79 +41,25 @@
       <file leaf-file-name="server.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="11" selection-start="374" selection-end="374" vertical-scroll-proportion="0.0">
+            <state line="25" column="19" selection-start="618" selection-end="629" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="spielSpieler.handlebars" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/spielSpieler.handlebars">
+      <file leaf-file-name="home.handlebars" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/views/home.handlebars">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="36" selection-start="36" selection-end="36" vertical-scroll-proportion="-0.0">
+            <state line="4" column="7" selection-start="189" selection-end="189" vertical-scroll-proportion="0.091883615">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="spieler.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/modules/resources/spieler.js">
+      <file leaf-file-name="main.handlebars" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/views/layouts/main.handlebars">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="27" selection-start="480" selection-end="480" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="spielSpieler.handlebars" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/views/layouts/spielSpieler.handlebars">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="6" selection-start="143" selection-end="143" vertical-scroll-proportion="0.2857143">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="spiel.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/modules/resources/spiel.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="55" column="24" selection-start="1423" selection-end="1439" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SpielIljig.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/modules/iljig/SpielIljig.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="0" selection-start="1614" selection-end="1614" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DBService.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/modules/iljig/DBService.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="63" column="27" selection-start="1965" selection-end="1965" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="spiel-Angelegt.handlebars" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/spiel-Angelegt.handlebars">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="108" selection-start="821" selection-end="832" vertical-scroll-proportion="-11.875">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="spiellist.handlebars" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/spiellist.handlebars">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="35" selection-start="106" selection-end="106" vertical-scroll-proportion="0.0">
+            <state line="12" column="26" selection-start="202" selection-end="202" vertical-scroll-proportion="-7.5">
               <folding />
             </state>
           </provider>
@@ -143,7 +85,6 @@
     <option name="changedFiles">
       <list>
         <option value="$PROJECT_DIR$/views/spiel.handlebars.html" />
-        <option value="$PROJECT_DIR$/views/layouts/main.handlebars" />
         <option value="$PROJECT_DIR$/modules/Util.js" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/views/home.handlebars" />
@@ -153,11 +94,12 @@
         <option value="$PROJECT_DIR$/modules/iljig/SpielIljig.js" />
         <option value="$PROJECT_DIR$/modules/resources/spiel.js" />
         <option value="$PROJECT_DIR$/views/spiel-Angelegt.handlebars" />
-        <option value="$PROJECT_DIR$/server.js" />
         <option value="$PROJECT_DIR$/views/spielSpieler.handlebars.html" />
         <option value="$PROJECT_DIR$/views/spielSpieler.handlebars" />
         <option value="$PROJECT_DIR$/views/layouts/laufendesSpiel.handlebars" />
         <option value="$PROJECT_DIR$/modules/resources/spieler.js" />
+        <option value="$PROJECT_DIR$/server.js" />
+        <option value="$PROJECT_DIR$/views/layouts/main.handlebars" />
       </list>
     </option>
   </component>
@@ -218,7 +160,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -321,19 +262,20 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="recentsLimit" value="5" />
     <property name="options.lastSelected" value="reference.settings.ide.settings.spelling" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Documents/WebStorm/iljig-node" />
+    <property name="recentsLimit" value="5" />
     <property name="restartRequiresConfirmation" value="true" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Documents/WebStorm/iljig-node" />
     <property name="FullScreen" value="false" />
     <property name="DefaultHtmlFileTemplate" value="Html5" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -375,9 +317,6 @@
       <setting name="jsFile" value="" />
       <method />
     </configuration>
-    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" working-dir="$PROJECT_DIR$">
-      <method />
-    </configuration>
     <configuration default="true" type="XSLT" factoryName="XSLT">
       <option name="myOutputFile" />
       <option name="myOpenOutputFile" value="false" />
@@ -392,6 +331,9 @@
       <OutputType value="CONSOLE" save-to-file="false" />
       <FileType name="XML" />
       <JdkChoice value="FROM_MODULE" />
+      <method />
+    </configuration>
+    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" working-dir="$PROJECT_DIR$">
       <method />
     </configuration>
     <configuration default="true" type="JavascriptDebugSession" factoryName="Local" singleton="true">
@@ -515,7 +457,11 @@
       <created>1362602336993</created>
       <updated>1362602336993</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Spiel aus Sicht des Spielers">
+      <created>1362757743345</created>
+      <updated>1362757743345</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -524,8 +470,8 @@
     <layout>
       <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22527473" sideWeight="0.43365923" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17946927" sideWeight="0.41318682" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17946927" sideWeight="0.35384616" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17946927" sideWeight="0.4934066" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17946927" sideWeight="0.2736264" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3945055" sideWeight="0.8449721" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21361332" sideWeight="0.21765602" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22527473" sideWeight="0.5614525" order="7" side_tool="true" content_ui="tabs" />
@@ -583,7 +529,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="admin Info mit Cookie merken" />
+    <option name="LAST_COMMIT_MESSAGE" value="Spiel aus Sicht des Spielers" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -606,6 +552,7 @@
     <MESSAGE value="callbacks bei Datenzugriffen eingebaut" />
     <MESSAGE value="..." />
     <MESSAGE value="admin Info mit Cookie merken" />
+    <MESSAGE value="Spiel aus Sicht des Spielers" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -613,11 +560,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/node_modules/express/lib/request.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="316" column="0" selection-start="7244" selection-end="7244" vertical-scroll-proportion="0.3314121" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/modules/Util.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="17" column="5" selection-start="442" selection-end="442" vertical-scroll-proportion="0.0" />
@@ -628,18 +570,9 @@
         <state line="10" column="51" selection-start="165" selection-end="165" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/home.handlebars">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="58" selection-start="181" selection-end="181" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/modules/Kartenspiel.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/express/lib/router/index.js">
@@ -649,42 +582,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/views/spiellist.handlebars">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="35" selection-start="106" selection-end="106" vertical-scroll-proportion="0.0">
+        <state line="3" column="35" selection-start="106" selection-end="106" vertical-scroll-proportion="0.06912442">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/modules/iljig/DBService.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="27" selection-start="1965" selection-end="1965" vertical-scroll-proportion="0.0">
+        <state line="63" column="27" selection-start="1965" selection-end="1965" vertical-scroll-proportion="0.022222223">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/modules/iljig/SpielIljig.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="0" selection-start="1614" selection-end="1614" vertical-scroll-proportion="0.0">
+        <state line="41" column="0" selection-start="1614" selection-end="1614" vertical-scroll-proportion="0.022222223">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/views/spiel-Angelegt.handlebars">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="108" selection-start="821" selection-end="832" vertical-scroll-proportion="-11.875">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="11" selection-start="374" selection-end="374" vertical-scroll-proportion="0.0">
+        <state line="19" column="108" selection-start="821" selection-end="832" vertical-scroll-proportion="0.437788">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/modules/resources/spiel.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="55" column="24" selection-start="1423" selection-end="1439" vertical-scroll-proportion="0.0">
+        <state line="55" column="24" selection-start="1423" selection-end="1439" vertical-scroll-proportion="0.49037036">
           <folding />
         </state>
       </provider>
@@ -712,7 +638,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/views/layouts/spielSpieler.handlebars">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="6" selection-start="143" selection-end="143" vertical-scroll-proportion="0.2857143">
+        <state line="14" column="7" selection-start="159" selection-end="159" vertical-scroll-proportion="0.3255814">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="19" selection-start="618" selection-end="629" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/layouts/main.handlebars">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="26" selection-start="202" selection-end="202" vertical-scroll-proportion="-7.5">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/home.handlebars">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="7" selection-start="189" selection-end="189" vertical-scroll-proportion="0.091883615">
           <folding />
         </state>
       </provider>

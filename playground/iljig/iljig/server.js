@@ -13,6 +13,7 @@ var express = require("express"),
     u = require("./modules/Util.js"),
     spiel = require("./modules/resources/spiel.js"),
     spieler = require("./modules/resources/spieler.js"),
+    conextRoot = "/iljig";
 
     app = express();
 
@@ -21,7 +22,8 @@ i18n.init({supportedLngs: ['en', 'de']});
 app.engine("handlebars", exphbs({
     defaultLayout: "main",
     helpers : {
-        t : i18n.t
+        t : i18n.t,
+        contextRoot : function() { return conextRoot; }
     }
 }));
 app.set("view engine", "handlebars");
@@ -36,15 +38,17 @@ app.use(express.static(__dirname + "/public"));
 
 i18n.registerAppHelper(app);    //Register AppHelper so you can use the translate function inside template
 
-app.get("/", spiel.home);
+app.get(conextRoot + "/", spiel.home);
 
-app.get("/spiel", spiel.list);
+app.get(conextRoot + "/spiel", spiel.list);
 
-app.all("/spiel/:spiel_id", spiel.load);
-app.post("/spiel/:spiel_id", spiel.save);
-app.all("/spiel/:spiel_id", spiel.view);
+app.all(conextRoot + "/spiel/:spiel_id", spiel.load);
+app.post(conextRoot + "/spiel/:spiel_id", spiel.save);
+app.all(conextRoot + "/spiel/:spiel_id", spiel.view);
 
-app.post("/spiel/:spiel_id/spieler/:spieler_id", spieler.load);
+app.post(conextRoot + "/spiel/:spiel_id/spieler/:spieler_id", spieler.load);
+
+app.get(conextRoot, function (req, res) { res.redirect(conextRoot + "/") });
 
 app.listen(3000);
 console.log("Listening on port 3000");
