@@ -72,22 +72,21 @@ StapelIljig.prototype = Object.create(k.Stapel.prototype, {
 GeberIljig = function () {
 };
 
+GeberIljig.SPIELER_ANZAHL_KARTEN = {
+        minAnzahl : 2,
+        maxAnzahl : 10,
+        2 : 7,
+        3 : 7,
+        4 : 7,
+        5 : 5,
+        6 : 5,
+        7 : 3,
+        8 : 3,
+        9 : 3,
+        10 : 3
+};
+
 GeberIljig.prototype = Object.create(Object.prototype, {
-    SPIELER_ANZAHL_KARTEN : {
-        value : {
-            minAnzahl : 2,
-            maxAnzahl : 10,
-            2 : 7,
-            3 : 7,
-            4 : 7,
-            5 : 5,
-            6 : 5,
-            7 : 3,
-            8 : 3,
-            9 : 3,
-            10 : 3
-        }
-    },
     gib : {
         value : function (stapel, /* Array */ spieler) {
             var k = 0, i, s,
@@ -103,7 +102,7 @@ GeberIljig.prototype = Object.create(Object.prototype, {
             gemischteKarten = karten.slice(0, karten.length);
             gemischteKarten.sort(mischen);
 
-            for (i = 0; i < this.SPIELER_ANZAHL_KARTEN[spieler.length]; i++) {
+            for (i = 0; i < GeberIljig.SPIELER_ANZAHL_KARTEN[spieler.length]; i++) {
                 for (s = 0; s < spieler.length; s++) {
                     spieler[s].addHandKarte(gemischteKarten[k]);
                     k++;

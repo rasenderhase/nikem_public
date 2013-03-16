@@ -67,7 +67,8 @@ SpielIljig.prototype = Object.create(Object.prototype, {
                 }
             }
             this.spieler.push(spieler);
-            this.anzahlSpieler++;
+            spieler.nummer = this.spieler.length;
+            this.anzahlSpieler = this.spieler.length;
         }
     },
     toDb : {

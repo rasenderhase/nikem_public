@@ -9,14 +9,14 @@
 var dbService = require("../iljig/DBService.js").dbService,
     s = require("../iljig/SpielIljig.js"),
     u = require("../Util.js").Util,
-    url = require('url'),
+    url = require("url"),
     handle = dbService.handle;
 
 exports.home = function(req, res) {
     var spielId = u.uuid(),
         adminGeheimnis = u.uuid();
     res.cookie("adminGeheimnis", adminGeheimnis, {
-        path: "/spiel/" + spielId,
+        path: "./spiel/" + spielId,
 //      maxAge : -1,         //Browser session cookie
         httpOnly: true      //Cookie darf vom Client nicht angefasst werden.
     });
@@ -46,7 +46,7 @@ exports.save = function(req, res, next){
         callback;
 
     callback = function() {
-        res.header("location", spiel.url);
+        res.header("location", req.path);
         next();
     };
 

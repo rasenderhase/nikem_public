@@ -11,14 +11,44 @@ var dbService = require("../iljig/DBService.js").dbService
 
 exports.load = function(req, res, next){
     var spielerId = req.param("spieler_id"),
-        spielId = req.param("spiel_id");
+        spielId = req.param("spiel_id"),
+        spielCallback;
 
-    res.status(201);
-    res.render("spielSpieler", {
-        spieler : {
-            id : spielerId,
-            name : req.param("spielerName")
-        },
-        layout : "spielSpieler"
-    });
+    spielCallback = function(spiel) {
+        dbService.getSpieler(spielerId, handle(function (spieler) {
+            req.atts = {
+                spiel : spiel,
+                spieler : spieler
+            };
+            next();
+        }));
+    };
+
+    dbService.getSpiel(spielId, handle(spielCallback));
+};
+
+exports.save = function(req, res, next){
+    var id = req.param("spieler_id"),
+        adminGeheimnis = req.param("adminGeheimnis"),
+        teilnahmeGeheimnis = req.param("teilnahmeGeheimnis"),
+        spielerName = req.param("name"),
+        spieler = req.atts.spieler,
+        spiel = req.atts.spiel,
+        callback;
+
+    callback = function() {
+        res.header("location", req.path);
+        next();
+    };
+
+    if (teilnahmeGeheimnis !== spiel.teilnahmeGeheimnis
+        && adminGeheimnis !== spiel.adminGeheimnis) {
+        next("Hacker!");
+    } else if (!spieler) {
+        spieler = new k.Spieler(id, spielerName, spiel.id);
+        spiel.addSpieler(spieler);                              //TODO ???
+        req.atts.spieler = spieler;
+        res.status(201);
+        dbService.saveSpieler(spieler, handle(callback));
+    } else callback(null);
 };

@@ -83,10 +83,11 @@ Kartenspiel.prototype = Object.create(Object.prototype, {
     }
 });
 
-
-Spieler = function(name) {
+Spieler = function(id, name, spielId) {
     this.name = name;
-    this.id = u.Util.uuid();
+    this.spielId = spielId;
+    this.id = id || u.Util.uuid();
+    this.nummer;
 };
 
 Spieler.prototype = Object.create(Object.prototype, {
@@ -110,11 +111,12 @@ Spieler.prototype = Object.create(Object.prototype, {
                 });
         }
     },
-    toJSON : {
-        value : function () {
+    toDb : {
+        value : function() {
             return {
+                id : this.id,
                 name : this.name,
-                id : this.id
+                spielId : this.spielId
             }
         }
     }
