@@ -31,7 +31,7 @@ exports.save = function(req, res, next){
     var id = req.param("spieler_id"),
         adminGeheimnis = req.param("adminGeheimnis"),
         teilnahmeGeheimnis = req.param("teilnahmeGeheimnis"),
-        spielerName = req.param("name"),
+        spielerName = req.param("spielerName"),
         spieler = req.atts.spieler,
         spiel = req.atts.spiel,
         callback;
