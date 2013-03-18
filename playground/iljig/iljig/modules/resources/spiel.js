@@ -62,13 +62,8 @@ exports.save = function(req, res, next){
         case s.SpielIljig.STATUS.angelegt:
             if (adminGeheimnis === spiel.adminGeheimnis
                 && req.body.status === s.SpielIljig.STATUS.gestartet) {
-
-                if (spiel.spieler.length < k.GeberIljig.SPIELER_ANZAHL_KARTEN.minAnzahl) {
-                    next("Zu wenige Spieler!");
-                } else {
-                    spiel.status = s.SpielIljig.STATUS.gestartet;
-                    dbService.saveSpiel(spiel, handle(callback));
-                }
+                spiel.starten();
+                dbService.saveSpiel(spiel, handle(callback));
             } else next();
             break;
         default:

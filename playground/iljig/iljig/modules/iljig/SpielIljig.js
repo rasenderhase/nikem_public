@@ -69,6 +69,18 @@ SpielIljig.prototype = Object.create(Object.prototype, {
             spieler.nummer = this.spieler.length;
         }
     },
+    starten : {
+        value : function () {
+            if (this.spieler.length < k.GeberIljig.SPIELER_ANZAHL_KARTEN.minAnzahl) {
+                throw {
+                    name : "ZuWenigeSpieler",
+                    message : "Es müssen mindestens " + k.GeberIljig.SPIELER_ANZAHL_KARTEN.minAnzahl + " Spieler mitspielen."
+                }
+            } else if (this.status === s.SpielIljig.STATUS.angelegt) {
+                this.status = s.SpielIljig.STATUS.gestartet;
+            }
+        }
+    },
     toDb : {
         value : function() {
             return {
