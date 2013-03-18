@@ -116,7 +116,8 @@ Spieler.prototype = Object.create(Object.prototype, {
             return {
                 id : this.id,
                 name : this.name,
-                spielId : this.spielId
+                spielId : this.spielId,
+                nummer : this.nummer
             }
         }
     }

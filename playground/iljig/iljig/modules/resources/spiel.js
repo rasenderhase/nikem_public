@@ -8,6 +8,7 @@
 
 var dbService = require("../iljig/DBService.js").dbService,
     s = require("../iljig/SpielIljig.js"),
+    k = require("../iljig/KartenspielIljig.js"),
     u = require("../Util.js").Util,
     url = require("url"),
     handle = dbService.handle;
@@ -43,6 +44,7 @@ exports.save = function(req, res, next){
     var id = req.param("spiel_id"),
         adminGeheimnis = req.param("adminGeheimnis"),
         spiel = req.atts.spiel,
+        status = spiel ? spiel.status : null,
         callback;
 
     callback = function() {
@@ -50,14 +52,28 @@ exports.save = function(req, res, next){
         next();
     };
 
-    if (!spiel) {
-        spiel = new s.SpielIljig(id, adminGeheimnis);
-        req.atts.spiel = spiel;
-        res.status(201);
-        dbService.saveSpiel(spiel, handle(callback));
-    } else if (adminGeheimnis === spiel.adminGeheimnis) {
-        callback(null);
-    } else next("Hacker!");
+    switch (status) {
+        case null:
+            spiel = new s.SpielIljig(id, adminGeheimnis);
+            req.atts.spiel = spiel;
+            res.status(201);
+            dbService.saveSpiel(spiel, handle(callback));
+            break;
+        case s.SpielIljig.STATUS.angelegt:
+            if (adminGeheimnis === spiel.adminGeheimnis
+                && req.body.status === s.SpielIljig.STATUS.gestartet) {
+
+                if (spiel.spieler.length < k.GeberIljig.SPIELER_ANZAHL_KARTEN.minAnzahl) {
+                    next("Zu wenige Spieler!");
+                } else {
+                    spiel.status = s.SpielIljig.STATUS.gestartet;
+                    dbService.saveSpiel(spiel, handle(callback));
+                }
+            } else next();
+            break;
+        default:
+            next();
+    }
 };
 
 exports.view = function(req, res){

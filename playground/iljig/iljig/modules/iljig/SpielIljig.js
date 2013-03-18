@@ -31,8 +31,7 @@ SpielIljig = function (id, adminGeheimnis) {
     this.adminGeheimnis = adminGeheimnis || u.uuid();
     this.status = SpielIljig.STATUS.angelegt;
     this.trumpf = null;
-    this.spielerNummerAnDerReihe = null;
-    this.anzahlSpieler = 0;
+    this.spielerNummerAnDerReihe = 0;
     this.lastAccess = Date.now();
 
     this.stapel = new k.StapelIljig();
@@ -68,7 +67,6 @@ SpielIljig.prototype = Object.create(Object.prototype, {
             }
             this.spieler.push(spieler);
             spieler.nummer = this.spieler.length;
-            this.anzahlSpieler = this.spieler.length;
         }
     },
     toDb : {

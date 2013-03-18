@@ -39,7 +39,9 @@ DbService.prototype = Object.create(Object.prototype, {
             try {
                 spiel.lastAccess = Date.now();
                 this.db.spiel[spiel.id] = spiel.toDb();
-                this.db.index.spielSpieler[spiel.id] = {};
+                if (!this.db.index.spielSpieler[spiel.id]) {
+                    this.db.index.spielSpieler[spiel.id] = {};
+                }
             } catch (e) {err = e;}
             if (callback) callback(err);
         }
@@ -57,9 +59,7 @@ DbService.prototype = Object.create(Object.prototype, {
                     spiel.extend(this.db.spiel[id]);                //Persistierte Daten überbraten
 
                     spielerList = this.getSpielerBySpiel(id);
-                    for (i in spielerList) {
-                        spiel.addSpieler(spielerList[i]);
-                    }
+                    spiel.spieler = spielerList;
                     result = spiel;
                 }
             } catch (e) {err = e;}
@@ -83,9 +83,7 @@ DbService.prototype = Object.create(Object.prototype, {
                         spiel.extend(this.db.spiel[i]);
 
                         spielerList = this.getSpielerBySpiel(spiel.id);
-                        for (i in spielerList) {
-                            spiel.addSpieler(spielerList[i]);
-                        }
+                        spiel.spieler = spielerList;
                         list.push(spiel);
                     }
                 }

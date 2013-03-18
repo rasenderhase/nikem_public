@@ -43,6 +43,8 @@ exports.save = function(req, res, next){
 
     if (teilnahmeGeheimnis !== spiel.teilnahmeGeheimnis
         && adminGeheimnis !== spiel.adminGeheimnis) {
+        //Wenn weder teilnahmeGeheimnis noch adminGeheimnis stimmen,
+        //muss es sich um einen Hacker handlen
         next("Hacker!");
     } else if (!spieler) {
         spieler = new k.Spieler(id, spielerName, spiel.id);
@@ -51,4 +53,15 @@ exports.save = function(req, res, next){
         res.status(201);
         dbService.saveSpieler(spieler, handle(callback));
     } else callback(null);
+};
+
+exports.view = function(req, res){
+    var spiel = req.atts.spiel,
+        spieler = req.atts.spieler,
+        renderOptions = {};
+
+    renderOptions.spiel = spiel;
+    renderOptions.spieler = spieler;
+
+    res.render("spielSpieler", renderOptions);
 };

@@ -8,7 +8,7 @@
         <li>Spiel: {{spiel.id}}</li>
         <li>letzter Zugriff: {{spiel.lastAccess}}</li>
         <li>Status: {{spiel.status}}</li>
-        <li>angemeldete Spieler: {{spiel.anzahlSpieler}}</li>
+        <li>angemeldete Spieler: {{spiel.spieler.length}}</li>
     </ul>
         {{#if admin}}
         <a href="mailto:?subject=Einladung zum Iljig spielen&body=Link zum Mitspielen: {{teilnahmeUrl}}">Lade deine Freunde ein!</a>

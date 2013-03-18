@@ -48,7 +48,7 @@ app.all(conextRoot + "/spiel/:spiel_id", spiel.view);
 
 app.all(conextRoot + "/spiel/:spiel_id/spieler/:spieler_id", spieler.load);
 app.post(conextRoot + "/spiel/:spiel_id/spieler/:spieler_id", spieler.save);
-app.all(conextRoot + "/spiel/:spiel_id/spieler/:spieler_id", spiel.view);
+app.all(conextRoot + "/spiel/:spiel_id/spieler/:spieler_id", spieler.view);
 
 app.get(conextRoot, function (req, res) { res.redirect(conextRoot + "/") });
 
