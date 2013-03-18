@@ -62,6 +62,7 @@ exports.view = function(req, res){
 
     renderOptions.spiel = spiel;
     renderOptions.spieler = spieler;
+    renderOptions.layout = "spielSpieler";
 
     res.render("spielSpieler", renderOptions);
 };

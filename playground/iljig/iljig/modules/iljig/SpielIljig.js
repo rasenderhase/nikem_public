@@ -23,7 +23,8 @@
 
 var SpielIljig, k, u;
 u = require("../Util.js").Util;
-k = require("./KartenspielIljig.js");
+k = require("./KartenspielIljig.js"),
+s = require("./SpielIljig.js");
 
 SpielIljig = function (id, adminGeheimnis) {
     this.id = id || u.uuid();

@@ -4,5 +4,15 @@
         <li>Spiel: {{spiel.id}}</li>
         <li>letzter Zugriff: {{spiel.lastAccess}}</li>
         <li>Status: {{spiel.status}}</li>
-        <li>angemeldete Spieler: {{spiel.spieler.length}}</li>
     </ul>
+
+    <table>
+        <thead>
+            <tr><th>Spieler</th></tr>
+        </thead>
+        <tbody>
+        {{#spiel.spieler}}
+        <tr><td>{{name}}</td></tr>
+        {{/spiel.spieler}}
+        </tbody>
+    </table>
