@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- see http://static.springsource.org/spring/docs/3.2.2.RELEASE/spring-framework-reference/html/ -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+           
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+  		<property name="locations" value="classpath:de/nikem/ipub/db.properties"/>
+	</bean>
+	
+	<bean name="jdbcUtil" class="de.nikem.jdbc.JdbcUtil.DriverJdbcUtil">
+		<constructor-arg value="com.mysql.jdbc.Driver"/>
+		<constructor-arg value="${connection.url}"/>
+		<constructor-arg value="${connection.username}"/>
+		<constructor-arg value="${connection.password}"/>
+		<constructor-arg>
+			<null />
+		</constructor-arg>
+		<property name="locations" value="classpath:de/nikem/ipub/Queries.xml" />
+	</bean>
+	
+	<bean name="publicationAction" class="de.nikem.ipub.resource.publication.PublicationAction">
+		<property name="jdbcUtil" ref="jdbcUtil" />
+	</bean>
+
+	<bean name="publicationListResource" class="de.nikem.ipub.resource.publication.PublicationListResource" scope="request">
+		<property name="publicationAction" ref="publicationAction" />
+		<property name="jdbcUtil" ref="jdbcUtil" />
+	</bean>
+    
+	<bean name="publicationResource" class="de.nikem.ipub.resource.publication.PublicationResource" scope="request">
+		<property name="publicationAction" ref="publicationAction" />
+		<property name="jdbcUtil" ref="jdbcUtil" />
+	</bean>
+</beans>

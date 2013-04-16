@@ -1,0 +1,57 @@
+* {
+	font-family: "Trebuchet MS", Verdana, sans-serif;
+}
+
+/* see http://www.alistapart.com/articles/prettyaccessibleforms */
+form.inputForm label:first-child {
+	display: inline-block;
+	line-height: 1.8;
+	vertical-align: top;
+	width: 120px; /* Width of labels */
+}
+
+form.inputForm input,select {
+	width: 200px;
+	font-size: 1.1em /*{fsDefault}*/;
+}
+
+form.inputForm ol {
+	margin: 0;
+	padding: 0;
+	float : left;
+}
+
+form.inputForm li {
+	list-style: none;
+	padding: 5px;
+	margin: 0;
+	width: 600px;		/*save space for error message*/
+}
+
+form.inputForm .clear {
+	clear: both;
+}
+
+/* Error styles */
+form .error {
+	color: #c00;
+}
+
+form label.error {
+	color: #c00;
+	font-size: 100%;
+	font-weight: bold;
+	width: 308px;
+	display: none;
+	padding: 3px 0px 0px 5px;
+	clear: both;
+}
+
+form label label.error {
+	margin-left: 0px;
+}
+
+/* Icon buttons */
+.icon-button {
+	cursor: pointer;	
+}

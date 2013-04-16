@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queries>
+	<query name="getPublications">
+		select * from (
+		select guid as guid, 
+			autor_name as autorName, 
+			autor_vorname as autorVorname, 
+			titel as titel, 
+			institut as institut, 
+			nummer as nummer, 
+			year(jahr) as jahr 
+		from ipub_publications
+		where status = 'aktiv'
+			and ('_' = substr(:queryString, 1, 1)
+			or lower(autor_name) like :queryString
+			or lower(titel) like :queryString
+			or lower(institut) like :queryString
+			or nummer = :queryNumber
+			or year(jahr) = :queryNumber)
+		) as t
+	</query>
+	<query name="getTotalCountPublications">
+		select count(1) as count from ipub_publications
+	</query>
+	<query name="getPublication">
+		select guid "guid", 
+			autor_name "autorName", 
+			autor_vorname "autorVorname", 
+			titel "titel", 
+			institut "institut", 
+			nummer "nummer", 
+			year(jahr) "jahr" 
+		from ipub_publications
+		where guid = :guid
+	</query>
+	<query name="updatePublication">
+		update ipub_publications
+			set autor_name = :autorName,
+			autor_vorname = :autorVorname,
+			titel = :titel,
+			institut = :institut,
+			nummer = :nummer,
+			jahr = :jahr,
+			aend_user = :aendUser,
+			aend_ts = current_timestamp()
+		where guid = :guid
+	</query>
+	<query name="insertPublication">
+		insert into ipub_publications (guid, autor_name, autor_vorname, titel, institut, nummer, jahr, aend_user, status, owner_user, sort_num)
+		values (:guid, :autorName, :autorVorname, :titel, :institut, :nummer, :jahr, :aendUser, 'aktiv', :owner, 1)
+	</query>
+
+</queries>
