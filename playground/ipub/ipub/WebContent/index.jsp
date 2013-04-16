@@ -13,7 +13,7 @@
 	src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/i18n/jquery.ui.datepicker-de.js"></script>
 <link rel="stylesheet"
-	href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css"
+	href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css"
 	type="text/css" media="all" />
 
 <!-- jQuery DataTables from http://datatables.net/ -->
