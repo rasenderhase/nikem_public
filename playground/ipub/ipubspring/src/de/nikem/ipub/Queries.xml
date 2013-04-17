@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<queries>
-	<query name="getPublications">
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<sql-query name="getPublications">
 		select * from (
 		select guid as guid, 
 			autor_name as autorName, 
@@ -18,22 +21,22 @@
 			or nummer = :queryNumber
 			or year(jahr) = :queryNumber)
 		) as t
-	</query>
-	<query name="getTotalCountPublications">
-		select count(1) as count from ipub_publications
-	</query>
-	<query name="getPublication">
-		select guid "guid", 
-			autor_name "autorName", 
-			autor_vorname "autorVorname", 
-			titel "titel", 
-			institut "institut", 
-			nummer "nummer", 
-			year(jahr) "jahr" 
+	</sql-query>
+	<sql-query name="getTotalCountPublications">
+		select count(1) as COUNT from ipub_publications
+	</sql-query>
+	<sql-query name="getPublication">
+		select GUID, 
+			AUTOR_NAME, 
+			AUTOR_VORNAME, 
+			TITEL, 
+			INSTITUT, 
+			NUMMER, 
+			year(jahr) JAHR 
 		from ipub_publications
 		where guid = :guid
-	</query>
-	<query name="updatePublication">
+	</sql-query>
+	<sql-query name="updatePublication">
 		update ipub_publications
 			set autor_name = :autorName,
 			autor_vorname = :autorVorname,
@@ -44,10 +47,10 @@
 			aend_user = :aendUser,
 			aend_ts = current_timestamp()
 		where guid = :guid
-	</query>
-	<query name="insertPublication">
+	</sql-query>
+	<sql-query name="insertPublication">
 		insert into ipub_publications (guid, autor_name, autor_vorname, titel, institut, nummer, jahr, aend_user, status, owner_user, sort_num)
 		values (:guid, :autorName, :autorVorname, :titel, :institut, :nummer, :jahr, :aendUser, 'aktiv', :owner, 1)
-	</query>
+	</sql-query>
 
-</queries>
+</hibernate-mapping>

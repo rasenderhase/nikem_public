@@ -10,15 +10,38 @@
   		<property name="locations" value="classpath:de/nikem/ipub/db.properties"/>
 	</bean>
 	
-	<bean name="jdbcUtil" class="de.nikem.jdbc.JdbcUtil.DriverJdbcUtil">
-		<constructor-arg value="com.mysql.jdbc.Driver"/>
-		<constructor-arg value="${connection.url}"/>
-		<constructor-arg value="${connection.username}"/>
-		<constructor-arg value="${connection.password}"/>
-		<constructor-arg>
-			<null />
-		</constructor-arg>
-		<property name="locations" value="classpath:de/nikem/ipub/Queries.xml" />
+	<bean id="ipubDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    	<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+    	<property name="url" value="${connection.url}"/>
+    	<property name="username" value="${connection.username}"/>
+    	<property name="password" value="${connection.password}"/>
+  	</bean>
+  	
+  	<!-- Alternative: Datasource aus dem App-Server:
+  		<jee:jndi-lookup id="ipubDataSource" jndi-name="java:comp/env/jdbc/myds"/>
+  	 -->
+	
+	<bean id="ipubSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    	<property name="dataSource" ref="ipubDataSource"/>
+    	<property name="mappingResources">
+      		<list>
+        		<value>de/nikem/ipub/Queries.xml</value>
+      		</list>
+    	</property>
+    	<property name="hibernateProperties">
+      		<value>
+        		hibernate.dialect=org.hibernate.dialect.MySQLDialect
+      		</value>
+    	</property>
+	</bean>
+	
+	<bean id="ipubTxManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+    	<property name="sessionFactory" ref="ipubSessionFactory"/>
+  	</bean>
+	
+	<bean name="jdbcUtil" class="de.nikem.jdbc.JdbcUtil">
+		<property name="txManager" ref="ipubTxManager" />
+		<property name="sessionFactory" ref="ipubSessionFactory" />
 	</bean>
 	
 	<bean name="publicationAction" class="de.nikem.ipub.resource.publication.PublicationAction">

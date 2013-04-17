@@ -1,39 +1,58 @@
 package de.nikem.jdbc;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
-import org.springframework.core.io.Resource;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.BigIntegerType;
+import org.hibernate.type.BinaryType;
+import org.hibernate.type.BooleanType;
+import org.hibernate.type.ByteType;
+import org.hibernate.type.CalendarType;
+import org.hibernate.type.CharacterType;
+import org.hibernate.type.DateType;
+import org.hibernate.type.DoubleType;
+import org.hibernate.type.FloatType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.ObjectType;
+import org.hibernate.type.ShortType;
+import org.hibernate.type.StringType;
+import org.hibernate.type.TimeType;
+import org.hibernate.type.TimestampType;
+import org.hibernate.type.Type;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * <b>JdbcUtil</b> provides methods to conveniently access and use data base data. <b>JdbcUtil</b> uses either a {@link DataSource} or {@link DriverManager} to retrieve JDBC connections. You may use <b>JdbcUtil</b> as a singleton object.
@@ -41,148 +60,16 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author andreas
  * 
  */
-public abstract class JdbcUtil {
-	private static class ConnectionInfo {
-		private final Connection con;
-		private boolean transactionActive = false;
-		public ConnectionInfo(Connection con) {
-			this.con = con;
-		}
-		public Connection getCon() {
-			return con;
-		}
-		public boolean isTransactionActive() {
-			return transactionActive;
-		}
-		public void setTransactionActive(boolean transactionActive) {
-			this.transactionActive = transactionActive;
-		}
-	}
+public class JdbcUtil {
+	public static final Type COLLECTION_TYPE = new ObjectType();
 
-	public static class DataSourceJdbcUtil extends JdbcUtil {
-		private final DataSource dataSource;
-		private DataSourceJdbcUtil(DataSource dataSource) {
-			this.dataSource = dataSource;
-		}
-		@Override
-		protected Connection getConnection() throws SQLException {
-			return dataSource.getConnection();
-		}
-	}
-
-	public static class DriverJdbcUtil extends JdbcUtil {
-		private final Properties info;
-		private final String password;
-		private final String url;
-		private final String user;
-
-		private DriverJdbcUtil(String driverclassName, String url, String user, String password, Properties info) throws ClassNotFoundException {
-			Class.forName(driverclassName);
-			this.url = url;
-			this.user = user;
-			this.password = password;
-			this.info = info;
-		}
-		@Override
-		protected Connection getConnection() throws SQLException {
-			if (user == null && info == null) {
-				return DriverManager.getConnection(url);
-			}
-			if (info == null) {
-				return DriverManager.getConnection(url, user, password);
-			}
-			return DriverManager.getConnection(url, info);
-		}
-	}
-
-	private class QueryParser extends DefaultHandler {
-		private StringBuilder query = new StringBuilder();
-		private String queryName = null;
-		private final Stack<String> tagStack = new Stack<String>();
-
-		@Override
-		public void characters(char[] ch, int start, int length) throws SAXException {
-			if ("query".equals(tagStack.peek())) {
-				query.append(new String(ch, start, length));
-			}
-		}
-
-		@Override
-		public void endElement(String uri, String localName, String qName) throws SAXException {
-			if ("query".equals(tagStack.pop())) {
-				String queryString = query.toString().trim();
-				log.fine(queryName + ": " + queryString);
-				queryString = queryMap.put(queryName, queryString);
-				if (queryString != null) {
-					log.warning("duplicate queries for name " + queryName + ". Query replaced: " + queryString);
-				}
-				query.setLength(0);
-			}
-		}
-
-		@Override
-		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-			if ("query".equals(tagStack.push(qName))) {
-				queryName = attributes.getValue("name");
-			}
-		}
-	}
-
-	private static class TransactionWork<T> implements Work<T> {
-		private final Work<T> delegate;
-
-		public TransactionWork(Work<T> delegate) {
-			this.delegate = delegate;
-		}
-
-		@Override
-		public T doWork(Connection con) throws SQLException {
-			ConnectionInfo info = threadConnection.get();
-			boolean myTransaction = false;
-			T result;
-			try {
-
-				if (!info.isTransactionActive()) {
-					con.setAutoCommit(false);
-					info.setTransactionActive(true);
-					myTransaction = true;
-				}
-
-				result = delegate.doWork(con);
-
-				if (myTransaction) {
-					log.fine("Commit Connection for Thread " + Thread.currentThread().getName());
-					con.commit();
-				}
-			} catch (SQLException e) {
-				if (myTransaction) {
-					log.fine("Rollback Connection for Thread " + Thread.currentThread().getName());
-					rollback(con);
-				}
-				NikemJdbcException ex = new NikemJdbcException(e);
-				log.throwing(getClass().getName(), "doInTransaction", ex);
-				throw ex;
-			} catch (RuntimeException e) {
-				if (myTransaction) {
-					log.fine("Rollback Connection for Thread " + Thread.currentThread().getName());
-					rollback(con);
-				}
-				log.throwing(getClass().getName(), "doInTransaction", e);
-				throw e;
-			}
-			return result;
-		}
-	}
+	private TransactionTemplate transactionTemplate;
+	private SessionFactory sessionFactory;
 
 	private static final Logger log = Logger.getLogger(JdbcUtil.class.getName());
-
 	private static final Pattern SQL_PARAM_PATTERN = Pattern.compile("(?i):[a-zA-z0-9_]+");
 
-	private static final ThreadLocal<ConnectionInfo> threadConnection = new ThreadLocal<ConnectionInfo>() {
-		protected ConnectionInfo initialValue() {
-			return null;
-		};
-	};
+	private final Map<Type, QueryParamSetter> setterMap = QueryParamSetter.createMap();
 
 	/**
 	 * Close a connection safely without throwing any exception.
@@ -242,40 +129,7 @@ public abstract class JdbcUtil {
 		}
 	}
 
-	private Map<String, String> queryMap = new HashMap<String, String>();
-
 	private JdbcUtil() {
-	}
-
-	public void setLocations(Resource[] locations) {
-		try {
-			for (Resource location : locations) {
-				addQueries(location.getFilename(), location.getInputStream());
-			}
-		} catch (IOException e) {
-			throw new NikemJdbcException(e);
-		}
-	}
-
-	public void addQueries(String resourceName) {
-		InputStream is = getClass().getResourceAsStream(resourceName);
-
-		addQueries(resourceName, is);
-	}
-
-	private void addQueries(String resourceName, InputStream is) {
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser;
-		try {
-			saxParser = factory.newSAXParser();
-			saxParser.parse(is, new QueryParser());
-		} catch (ParserConfigurationException e) {
-			throw new NikemJdbcException("Bad parser configuration", e);
-		} catch (SAXException e) {
-			throw new NikemJdbcException("Bad XML input stream", e);
-		} catch (IOException e) {
-			throw new NikemJdbcException("Exception accessing resource " + resourceName, e);
-		}
 	}
 
 	protected Object changeToSqlDatatype(QueryParam param) {
@@ -290,120 +144,96 @@ public abstract class JdbcUtil {
 	}
 
 	/**
-	 * Execute a piece of work using a transaction. If there is an existing transaction associated with the current thread use the existing transaction. If not create one and bind it to the current thred. The <code>Connection</code> object
+	 * Execute a piece of work using a transaction. If there is an existing transaction associated with the current thread use the existing transaction. If not create one and bind it to the current thread. The <code>Connection</code> object
 	 * is provided to the {@link Work#doWork(Connection)} method.
 	 * 
 	 * @param work
 	 *            piece of work to be executed in an transaction
 	 * @return result of the work execution
 	 */
-	public <T> T doInTransaction(Work<T> work) {
-		return doWithoutTransaction(new TransactionWork<T>(work));
+	public <T> T doInTransaction(final Work<T> work) {
+		return getTransactionTemplate().execute(new TransactionCallback<T>() {
+			@SuppressWarnings("unchecked")
+			public T doInTransaction(TransactionStatus paramTransactionStatus) {
+				final Object[] result = new Object[1];
+				Session session = getSessionFactory().getCurrentSession();
+				session.doWork(new org.hibernate.jdbc.Work() {
+
+					@Override
+					public void execute(Connection connection) throws SQLException {
+						result[0] = work.doWork(connection);
+					}
+				});
+				return (T) result[0];
+			}
+		});
 	}
 
 	/**
-	 * Execute a piece of work. The <code>Connection</code> object is provided to the {@link Work#doWork(Connection)} method.
+	 * Execute a piece of work using a transaction. If there is an existing transaction associated with the current thread use the existing transaction. If not create one and bind it to the current thread.
 	 * 
 	 * @param work
-	 *            piece of work to be executed
+	 *            piece of work to be executed in an transaction
 	 * @return result of the work execution
 	 */
-	public <T> T doWithoutTransaction(Work<T> work) {
-		ConnectionInfo info = threadConnection.get();
-		Connection con = null;
-		boolean myConnection = false;
-		T result;
-		try {
-			if (info == null) {
-				log.fine("Retrieve Connection for Thread " + Thread.currentThread().getName());
-				con = getConnection();
-				info = new ConnectionInfo(con);
-				threadConnection.set(info);
-				myConnection = true;
-			} else {
-				log.fine("Reuse Connection for Thread " + Thread.currentThread().getName());
-				con = info.getCon();
-			}
-
-			result = work.doWork(con);
-
-		} catch (SQLException e) {
-			NikemJdbcException ex = new NikemJdbcException(e);
-			log.throwing(getClass().getName(), "doWithoutTransaction", ex);
-			throw ex;
-		} catch (RuntimeException e) {
-			log.throwing(getClass().getName(), "doWithoutTransaction", e);
-			throw e;
-		} finally {
-			if (myConnection) {
-				log.fine("Close Connection for Thread " + Thread.currentThread().getName());
-				threadConnection.remove();
-				close(con);
-			}
-		}
-		return result;
+	public <T> T doInTransaction(TransactionCallback<T> transactionCallback) {
+		return getTransactionTemplate().execute(transactionCallback);
 	}
 
 	/**
-	 * Execute a named query and return the complete result of the query execution as a list of row maps.
+	 * execute a piece of work on a JDBC connection without transaction. (i.e. for read operations). Note that <b>in Hibernate there is no data access without transaction</b>. So this method is the same as {@link #doInTransaction(Work)}.
 	 * 
-	 * @param queryName
-	 *            name of the query in the query xml file.
-	 * @param queryParams
-	 *            named parameters for the query execution
-	 * @return result as a list of &lt;uppercase ColumnName, ColumnValue&gt; maps per each row.
+	 * @param work
+	 *            either a {@link Work} instance or a {@link Sam4Work} instance if you need access to Hibernate named queries or if you want to provide a return value.
+	 * @see https://community.jboss.org/wiki/Sessionsandtransactions
 	 */
+	public <T> T doWithoutTransaction(final Work<T> work) {
+		return (T) doInTransaction(work);
+	}
+
+	@SuppressWarnings("unchecked")
 	public List<Map<String, ?>> executeNamedQuery(final String queryName, final QueryParam... queryParams) {
-		final String queryString = getNamedQuery(queryName);
-		return doWithoutTransaction(new Work<List<Map<String, ?>>>() {
+		return doInTransaction(new TransactionCallback<List<Map<String, ?>>>() {
 			@Override
-			public List<Map<String, ?>> doWork(Connection con) throws SQLException {
-				PreparedStatement stmt = null;
-				ResultSet resultSet = null;
-				List<Map<String, ?>> result = new ArrayList<Map<String, ?>>();
-				try {
-					stmt = prepareStatement(con, queryString, queryParams);
-					resultSet = stmt.executeQuery();
-					while (resultSet.next()) {
-						result.add(resultSetRowToMap(resultSet));
-					}
-				} finally {
-					close(resultSet);
-					close(stmt);
+			public List<Map<String, ?>> doInTransaction(TransactionStatus status) {
+				Session session = getSessionFactory().getCurrentSession();
+				Query query = session.getNamedQuery(queryName);
+				for (QueryParam queryParam : queryParams) {
+					getSetterMap().get(queryParam.getType()).execute(query, queryParam.getName(), queryParam.getValue());
 				}
-				return result;
+				return query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
 			}
 		});
 	}
 
-	/**
-	 * Execute a named query that does not return a result set. (E.g. INSERT, UPDATE, DELETE)
-	 * 
-	 * @param queryName
-	 *            name of the query in the query xml file.
-	 * @param queryParams
-	 *            named parameters for the query execution.
-	 * @return either (1) the row count for SQL Data Manipulation Language (DML) statements or (2) 0 for SQL statements that return nothing
-	 * @see {@link PreparedStatement#executeUpdate()}
-	 */
-	public int executeUpdateNamedQuery(final String queryName, final QueryParam... queryParams) {
-		final String queryString = getNamedQuery(queryName);
-
-		return doInTransaction(new Work<Integer>() {
+	@SuppressWarnings("unchecked")
+	public Map<String, ?> executeNamedQueryUniqueResult(final String queryName, final QueryParam... queryParams) {
+		return doInTransaction(new TransactionCallback<Map<String, ?>>() {
 			@Override
-			public Integer doWork(Connection con) throws SQLException {
-				PreparedStatement stmt = null;
-				try {
-					stmt = prepareStatement(con, queryString, queryParams);
-					return stmt.executeUpdate();
-				} finally {
-					close(stmt);
+			public Map<String, ?> doInTransaction(TransactionStatus status) {
+				Session session = getSessionFactory().getCurrentSession();
+				Query query = session.getNamedQuery(queryName);
+				for (QueryParam queryParam : queryParams) {
+					getSetterMap().get(queryParam.getType()).execute(query, queryParam.getName(), queryParam.getValue());
 				}
+				return (Map<String, ?>) query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).uniqueResult();
 			}
 		});
 	}
 
-	protected abstract Connection getConnection() throws SQLException;
+	public int executeUpdateNamedQuery(final String queryName, final QueryParam... params) {
+		return doInTransaction(new TransactionCallback<Integer>() {
+			@Override
+			public Integer doInTransaction(TransactionStatus status) {
+				Session session = getSessionFactory().getCurrentSession();
+				Query query = session.getNamedQuery(queryName);
+				for (QueryParam param : params) {
+					getSetterMap().get(param.getType()).execute(query, param.getName(), param.getValue());
+				}
+				return query.executeUpdate();
+			}
+		});
+	}
 
 	protected String parameterMarkers(int size) {
 		StringBuffer sb = new StringBuffer(size * 2);
@@ -531,10 +361,187 @@ public abstract class JdbcUtil {
 	 *            name of the query
 	 * @return query string
 	 */
-	public String getNamedQuery(String name) {
-		String queryString = queryMap.get(name);
-		if (queryString == null)
-			throw new NikemJdbcException("No query found for name " + name);
-		return queryString;
+	public String getNamedQuery(final String name) {
+		return getTransactionTemplate().execute(new TransactionCallback<String>() {
+			@Override
+			public String doInTransaction(TransactionStatus status) {
+				Query query = getSessionFactory().getCurrentSession().getNamedQuery(name);
+
+				if (query == null)
+					throw new NikemJdbcException("No query found for name " + name);
+				return query.getQueryString();
+			}
+		});
 	}
+
+	/**
+	 * Type dependent setter for query parameters
+	 * 
+	 * @author andreas
+	 * 
+	 */
+	public static abstract class QueryParamSetter {
+
+		public abstract void execute(Query query, String name, Object value);
+
+		public static Map<Type, QueryParamSetter> createMap() {
+			Map<Type, QueryParamSetter> map = new HashMap<Type, QueryParamSetter>();
+			map.put(BigDecimalType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					query.setBigDecimal(name, (BigDecimal) value);
+				}
+			});
+			map.put(BigIntegerType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					query.setBigInteger(name, (BigInteger) value);
+				}
+			});
+			map.put(BinaryType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					query.setBinary(name, (byte[]) value);
+				}
+			});
+			map.put(BooleanType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					if (value != null) {
+						query.setBoolean(name, (Boolean) value);
+					} else {
+						query.setParameter(name, null);
+					}
+				}
+			});
+			map.put(ByteType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					if (value != null) {
+						query.setByte(name, (Byte) value);
+					} else {
+						query.setParameter(name, null);
+					}
+				}
+			});
+			map.put(CalendarType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					query.setCalendar(name, (Calendar) value);
+				}
+			});
+			map.put(CharacterType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					if (value != null) {
+						query.setCharacter(name, (Character) value);
+					} else {
+						query.setParameter(name, null);
+					}
+				}
+			});
+			map.put(DateType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					query.setDate(name, (Date) value);
+				}
+			});
+			map.put(TimeType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					query.setTime(name, (Time) value);
+				}
+			});
+			map.put(TimestampType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					query.setTimestamp(name, (Timestamp) value);
+				}
+			});
+			map.put(DoubleType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					if (value != null) {
+						query.setDouble(name, (Double) value);
+					} else {
+						query.setParameter(name, null);
+					}
+				}
+			});
+			map.put(FloatType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					if (value != null) {
+						query.setFloat(name, (Float) value);
+					} else {
+						query.setParameter(name, null);
+					}
+				}
+			});
+			map.put(IntegerType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					if (value != null) {
+						query.setInteger(name, (Integer) value);
+					} else {
+						query.setParameter(name, null);
+					}
+				}
+			});
+			map.put(LongType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					if (value != null) {
+						query.setLong(name, (Long) value);
+					} else {
+						query.setParameter(name, null);
+					}
+				}
+			});
+			map.put(ShortType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					if (value != null) {
+						query.setShort(name, (Short) value);
+					} else {
+						query.setParameter(name, null);
+					}
+				}
+			});
+			map.put(StringType.INSTANCE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					query.setString(name, (String) value);
+				}
+			});
+			map.put(COLLECTION_TYPE, new QueryParamSetter() {
+				@Override
+				public void execute(Query query, String name, Object value) {
+					query.setParameterList(name, (Collection<?>) value);
+				}
+			});
+			return map;
+		}
+	}
+
+	public void setTxManager(PlatformTransactionManager txManager) {
+		this.transactionTemplate = new TransactionTemplate(txManager);
+	}
+
+	protected TransactionTemplate getTransactionTemplate() {
+		return transactionTemplate;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	protected SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	protected Map<Type, QueryParamSetter> getSetterMap() {
+		return setterMap;
+	}
+
 }
