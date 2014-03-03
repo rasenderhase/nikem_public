@@ -1,7 +1,10 @@
 package de.nikem.ipub.resource.publication;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.FormParam;
@@ -16,42 +19,51 @@ import javax.ws.rs.core.UriInfo;
 
 import org.json.JSONWriter;
 
+import de.nikem.dataj.jq.JqListPage;
 import de.nikem.ipub.app.App;
 import de.nikem.ipub.jersey.JerseyUtil;
 import de.nikem.ipub.jersey.JsonOutput;
 import de.nikem.jdbc.QueryParam;
-import de.nikem.jdbc.jquery.JQueryListPage;
-import de.nikem.jdbc.jquery.JQueryScrollDataBlockQuery;
+import de.nikem.jdbc.jq.JdbcUtilJqPaginationQuery;
 
 @Path("/publication")
 public class PublicationListResource {
-
+	private final Logger log = Logger.getLogger(getClass().getName());
 	private @Context ServletContext context;
 
 	@GET
 	@Produces("application/json;charset=UTF-8")
 	public Response doGet(final @Context UriInfo allUri) {
+		
+		Map<String, String[]> parameterMap = JerseyUtil.toNormalParameterMap(allUri.getQueryParameters());
+		String queryString = allUri.getQueryParameters().getFirst("query");
+		BigDecimal queryNumber = BigDecimal.ZERO;
+		if (queryString == null || queryString.length() == 0) {
+			queryString = "_";
+		} else {
+			try {
+				queryNumber = BigDecimal.valueOf(Long.parseLong(queryString));
+			} catch (NumberFormatException ex) {
+				queryString = queryString.toLowerCase() + "%";
+			}
+		}
+		
+		JdbcUtilJqPaginationQuery query = new JdbcUtilJqPaginationQuery(App.getSingletonFactory(context).getJdbcUtil(), "getPublications",
+				parameterMap, null, new QueryParam("queryString", queryString), new QueryParam("queryNumber", queryNumber));
+		final JqListPage<Map<String, ?>> listPage;
+		try {
+			listPage = query.execute();
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, "", e);
+			return Response.serverError().build();
+		}
+		
 		StreamingOutput output = new JsonOutput() {
 			@Override
 			protected void write(JSONWriter w) {
-				Map<String, String[]> parameterMap = JerseyUtil.toNormalParameterMap(allUri.getQueryParameters());
-				String queryString = allUri.getQueryParameters().getFirst("query");
-				BigDecimal queryNumber = BigDecimal.ZERO;
-				if (queryString == null || queryString.length() == 0) {
-					queryString = "_";
-				} else {
-					try {
-						queryNumber = BigDecimal.valueOf(Long.parseLong(queryString));
-					} catch (NumberFormatException ex) {
-						queryString = queryString.toLowerCase() + "%";
-					}
-				}
 				
-				JQueryScrollDataBlockQuery query = new JQueryScrollDataBlockQuery(App.getSingletonFactory(context).getJdbcUtil(), "getPublications",
-						parameterMap, new QueryParam("queryString", queryString), new QueryParam("queryNumber", queryNumber));
-				JQueryListPage listPage = query.execute();
-				listPage.setTotalRecords(((Number) App.getSingletonFactory(context).getJdbcUtil().executeNamedQuery("getTotalCountPublications")
-						.get(0).get("COUNT")).intValue());
+				//listPage.setTotalRecords(((Number) App.getSingletonFactory(context).getJdbcUtil().executeNamedQuery("getTotalCountPublications")
+				//		.get(0).get("COUNT")).intValue());
 				
 				w.object();
 				w.key("iTotalRecords").value(listPage.getTotalRecords());

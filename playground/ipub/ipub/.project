@@ -3,6 +3,7 @@
 	<name>ipub</name>
 	<comment></comment>
 	<projects>
+		<project>dataj</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

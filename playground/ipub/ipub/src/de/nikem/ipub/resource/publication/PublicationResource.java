@@ -35,7 +35,7 @@ public class PublicationResource {
 			@Override
 			protected void write(JSONWriter w) {
 				List<Map<String, ?>> result = App.getSingletonFactory(context).getJdbcUtil()
-						.executeNamedQuery("getPublication", new QueryParam("guid", guid));
+						.executeNamedQuery("getPublication", null, new QueryParam("guid", guid));
 				if (result.isEmpty()) {
 					throw new NotFoundException("Publication with guid " + guid + " does not exist.");
 				}

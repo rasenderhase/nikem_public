@@ -30,7 +30,7 @@ public class PublicationAction {
 		int updated = App
 				.getSingletonFactory(context)
 				.getJdbcUtil()
-				.executeUpdateNamedQuery("updatePublication", new QueryParam("guid", guid), new QueryParam("autorName", autorName),
+				.executeUpdateNamedQuery("updatePublication", null, new QueryParam("guid", guid), new QueryParam("autorName", autorName),
 						new QueryParam("autorVorname", autorVorname), new QueryParam("titel", titel), new QueryParam("institut", institut),
 						new QueryParam("nummer", nummer), new QueryParam("aendUser", "andreas"),
 						new QueryParam("jahr", new Date(cal.getTime().getTime())));
@@ -38,7 +38,7 @@ public class PublicationAction {
 		if (updated == 0) {
 			App.getSingletonFactory(context)
 					.getJdbcUtil()
-					.executeUpdateNamedQuery("insertPublication", new QueryParam("guid", guid), new QueryParam("autorName", autorName),
+					.executeUpdateNamedQuery("insertPublication", null, new QueryParam("guid", guid), new QueryParam("autorName", autorName),
 							new QueryParam("autorVorname", autorVorname), new QueryParam("titel", titel), new QueryParam("institut", institut),
 							new QueryParam("nummer", nummer), new QueryParam("owner", "andreas"), new QueryParam("aendUser", "andreas"),
 							new QueryParam("jahr", new Date(cal.getTime().getTime())));

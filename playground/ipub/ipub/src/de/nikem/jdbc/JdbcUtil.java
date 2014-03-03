@@ -2,6 +2,7 @@ package de.nikem.jdbc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -41,7 +42,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  */
 public abstract class JdbcUtil {
-	private static class ConnectionInfo {
+	public static class ConnectionInfo {
 		private final Connection con;
 		private boolean transactionActive = false;
 		public ConnectionInfo(Connection con) {
@@ -67,19 +68,70 @@ public abstract class JdbcUtil {
 		protected Connection getConnection() throws SQLException {
 			return dataSource.getConnection();
 		}
+		public DataSource getDataSource() {
+			return dataSource;
+		}
 	}
 
 	private static class DriverJdbcUtil extends JdbcUtil {
+		private class DriverManagerDataSource implements DataSource {
+			private PrintWriter out;
+			
+			@Override
+			public <T> T unwrap(Class<T> iface) throws SQLException {
+				throw new UnsupportedOperationException("unwrap is not supported.");
+			}
+			
+			@Override
+			public boolean isWrapperFor(Class<?> iface) throws SQLException {
+				throw new UnsupportedOperationException("unwrap is not supported.");
+			}
+			
+			@Override
+			public void setLoginTimeout(int seconds) throws SQLException {
+				throw new UnsupportedOperationException("Login timeout is not supported.");
+			}
+			
+			@Override
+			public void setLogWriter(PrintWriter out) throws SQLException {
+				this.out = out;
+			}
+			
+			@Override
+			public int getLoginTimeout() throws SQLException {
+				throw new UnsupportedOperationException("Login timeout is not supported.");
+			}
+			
+			@Override
+			public PrintWriter getLogWriter() throws SQLException {
+				return out;
+			}
+			
+			@Override
+			public Connection getConnection(String username, String password) throws SQLException {
+				return DriverJdbcUtil.this.getConnection();
+			}
+			
+			@Override
+			public Connection getConnection() throws SQLException {
+				return DriverJdbcUtil.this.getConnection();
+			}
+		};
+		
+		
 		private final Properties info;
 		private final String password;
 		private final String url;
 		private final String user;
+		
+		private final DataSource dataSource;
 
 		private DriverJdbcUtil(String url, String user, String password, Properties info) {
 			this.url = url;
 			this.user = user;
 			this.password = password;
 			this.info = info;
+			this.dataSource = new DriverManagerDataSource();
 		}
 		@Override
 		protected Connection getConnection() throws SQLException {
@@ -90,6 +142,11 @@ public abstract class JdbcUtil {
 				return DriverManager.getConnection(url, user, password);
 			}
 			return DriverManager.getConnection(url, info);
+		}
+		
+		@Override
+		public DataSource getDataSource() {
+			return dataSource; 
 		}
 	}
 
@@ -391,7 +448,7 @@ public abstract class JdbcUtil {
 	 *            named parameters for the query execution
 	 * @return result as a list of &lt;uppercase ColumnName, ColumnValue&gt; maps per each row.
 	 */
-	public List<Map<String, ?>> executeNamedQuery(final String queryName, final QueryParam... queryParams) {
+	public List<Map<String, ?>> executeNamedQuery(final String queryName, final QueryParam[] preprocessQueryParams, final QueryParam... queryParams) {
 		final String queryString = getNamedQuery(queryName);
 		return doWithoutTransaction(new Work<List<Map<String, ?>>>() {
 			@Override
@@ -400,7 +457,7 @@ public abstract class JdbcUtil {
 				ResultSet resultSet = null;
 				List<Map<String, ?>> result = new ArrayList<Map<String, ?>>();
 				try {
-					stmt = prepareStatement(con, queryString, queryParams);
+					stmt = prepareStatement(con, queryString, preprocessQueryParams, queryParams);
 					resultSet = stmt.executeQuery();
 					while (resultSet.next()) {
 						result.add(resultSetRowToMap(resultSet));
@@ -424,7 +481,7 @@ public abstract class JdbcUtil {
 	 * @return either (1) the row count for SQL Data Manipulation Language (DML) statements or (2) 0 for SQL statements that return nothing
 	 * @see {@link PreparedStatement#executeUpdate()}
 	 */
-	public int executeUpdateNamedQuery(final String queryName, final QueryParam... queryParams) {
+	public int executeUpdateNamedQuery(final String queryName, final QueryParam[] preprocessQueryParams, final QueryParam... queryParams) {
 		final String queryString = getNamedQuery(queryName);
 
 		return doInTransaction(new Work<Integer>() {
@@ -432,7 +489,7 @@ public abstract class JdbcUtil {
 			public Integer doWork(Connection con) throws SQLException {
 				PreparedStatement stmt = null;
 				try {
-					stmt = prepareStatement(con, queryString, queryParams);
+					stmt = prepareStatement(con, queryString, preprocessQueryParams, queryParams);
 					return stmt.executeUpdate();
 				} finally {
 					close(stmt);
@@ -441,7 +498,56 @@ public abstract class JdbcUtil {
 		});
 	}
 
+	private String replacePreprocessQueryParams(String queryString, final QueryParam[] preprocessQueryParams) {
+		Map<String, QueryParam> preprocessQueryParamMap = new HashMap<String, QueryParam>();
+
+		if (preprocessQueryParams != null) {
+			for (QueryParam p : preprocessQueryParams) {
+				preprocessQueryParamMap.put(p.getName(), p);
+			}
+		}
+
+		int[] recursionCounter = new int[] {0};
+		String resultQueryString = replacePreprocessQueryParams(queryString,
+				preprocessQueryParamMap, recursionCounter);
+		return resultQueryString;
+	}
+
+	protected String replacePreprocessQueryParams(String queryString, Map<String, QueryParam> preprocessQueryParamMap, int[] recursionCounter) {
+		recursionCounter[0] += 1;
+		if (recursionCounter[0] > 10) {
+			throw new NikemJdbcException("Zu viele Preprocess-Rekursionen in Query-String: " + queryString);
+		}
+		
+		Matcher matcher = SQL_PARAM_PATTERN.matcher(queryString);
+		StringBuffer sb = new StringBuffer();
+		while (matcher.find()) {
+			String paramName = matcher.group().substring(1); // cut colon
+			QueryParam queryParam = preprocessQueryParamMap.get(paramName);
+			if (queryParam != null) {
+				String valueString = "";
+				Object value = queryParam.getValue();
+				if (value != null) {
+					valueString = value.toString().trim();
+				}
+				
+				matcher.appendReplacement(sb, valueString);
+			} else {
+				//dann ist es wohl ein echter Query-Param -> stehen lassen
+				matcher.appendReplacement(sb, matcher.group());
+			}
+
+		}
+		matcher.appendTail(sb);
+		String resultQueryString = sb.toString();
+		if (!queryString.equals(resultQueryString)) {
+			resultQueryString = replacePreprocessQueryParams(resultQueryString, preprocessQueryParamMap, recursionCounter);
+		}
+		return resultQueryString;
+	}
+	
 	protected abstract Connection getConnection() throws SQLException;
+	public abstract DataSource getDataSource();
 
 	protected String parameterMarkers(int size) {
 		StringBuffer sb = new StringBuffer(size * 2);
@@ -467,16 +573,16 @@ public abstract class JdbcUtil {
 	 * @throws SQLException
 	 *             if a database access error occurs
 	 */
-	public PreparedStatement prepareStatement(Connection con, String queryString, QueryParam... queryParams) throws SQLException {
+	public PreparedStatement prepareStatement(Connection con, String queryString, QueryParam[] preprocessQueryParams, QueryParam... queryParams) throws SQLException {
 		final Map<String, QueryParam> queryParamMap = new LinkedHashMap<String, QueryParam>();
 		for (QueryParam param : queryParams) {
 			queryParamMap.put(param.getName(), param);
 		}
-		return prepareStatementMap(con, queryString, queryParamMap);
+		return prepareStatementMap(con, queryString, preprocessQueryParams, queryParamMap);
 	}
 
-	protected PreparedStatement prepareStatementMap(Connection con, String queryString, Map<String, QueryParam> queryParams) throws SQLException {
-		String tmpString = queryString;
+	protected PreparedStatement prepareStatementMap(Connection con, String queryString, QueryParam[] preprocessQueryParams, Map<String, QueryParam> queryParams) throws SQLException {
+		String tmpString = replacePreprocessQueryParams(queryString, preprocessQueryParams);
 		List<QueryParam> paramList = new ArrayList<QueryParam>();
 
 		Matcher matcher = SQL_PARAM_PATTERN.matcher(tmpString);
