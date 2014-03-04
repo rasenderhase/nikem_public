@@ -19,7 +19,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.json.JSONWriter;
 
-import de.nikem.dataj.jq.JqListPage;
+import de.nikem.dataj.ListPage;
 import de.nikem.ipub.app.App;
 import de.nikem.ipub.jersey.JerseyUtil;
 import de.nikem.ipub.jersey.JsonOutput;
@@ -50,7 +50,7 @@ public class PublicationListResource {
 		
 		JdbcUtilJqPaginationQuery query = new JdbcUtilJqPaginationQuery(App.getSingletonFactory(context).getJdbcUtil(), "getPublications",
 				parameterMap, null, new QueryParam("queryString", queryString), new QueryParam("queryNumber", queryNumber));
-		final JqListPage<Map<String, ?>> listPage;
+		final ListPage<Map<String, ?>> listPage;
 		try {
 			listPage = query.execute();
 		} catch (SQLException e) {
@@ -72,7 +72,7 @@ public class PublicationListResource {
 				w.key("records");
 				{
 					w.array();
-					for (Map<String, ?> row : listPage.getAaData()) {
+					for (Map<String, ?> row : listPage.getData()) {
 						w.object();
 						w.key("guid").value(row.get("GUID"));
 						w.key("autorName").value(row.get("AUTORNAME"));
