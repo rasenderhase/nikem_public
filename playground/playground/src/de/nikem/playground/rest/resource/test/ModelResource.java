@@ -15,6 +15,10 @@ import com.sun.jersey.api.view.Viewable;
 import de.nikem.playground.model.Model;
 import de.nikem.playground.model.MyModel;
 
+/**
+ * 
+ * @author andreas URL: http://localhost:8080/playground/rest/servlet/model
+ */
 @Path("/model")
 public class ModelResource {
 
