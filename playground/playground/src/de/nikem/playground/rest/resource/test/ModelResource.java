@@ -31,11 +31,11 @@ public class ModelResource {
 	public Object get(@Context UriInfo allUri) {
 		Model model;
 		MultivaluedMap<String, String> params = allUri.getQueryParameters();
-		if (params.isEmpty()) {
+		if (params.containsKey("changed")) {
+			model = calc(params);
+		} else {
 			model = new MyModel();
 			model.setPersistent(loadData());
-		} else {
-			model = calc(params);
 		}
 		return new Viewable("/rest/model", model);
 	}
