@@ -6,7 +6,9 @@ import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
 
 import com.sun.jersey.api.view.Viewable;
 
@@ -26,11 +28,15 @@ public class ModelResource {
 	}
 
 	@GET
-	@Path("/")
-	public Object get() {
-		Model model = new MyModel();
-		model.setPersistent(loadData());
-
+	public Object get(@Context UriInfo allUri) {
+		Model model;
+		MultivaluedMap<String, String> params = allUri.getQueryParameters();
+		if (params.isEmpty()) {
+			model = new MyModel();
+			model.setPersistent(loadData());
+		} else {
+			model = calc(params);
+		}
 		return new Viewable("/rest/model", model);
 	}
 
@@ -48,18 +54,15 @@ public class ModelResource {
 		return new Viewable("/rest/model", model);
 	}
 
-	@POST()
-	@Path("calc")
-	public Object calc(MultivaluedMap<String, String> form) {
+	private MyModel calc(MultivaluedMap<String, String> form) {
 		MyModel model = new MyModel();
 
 		model.setClientData(form);
 		if (model.validate()) {
 			model.calculate();
 		}
-		model.setAction("..");
 
-		return new Viewable("/rest/model", model);
+		return model;
 	}
 
 	private Map<String, Object> loadData() {
