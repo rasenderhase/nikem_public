@@ -23,7 +23,7 @@ li {
 </head>
 <body>
 
-	<form action = "" method="post">
+	<form action="${it.action}" method="post">
 	<input type="hidden" name="changed" value="${it.changed[0]}">
 	<input type="hidden" name="changed" value="${it.changed[1]}">
 	<ul>
@@ -41,8 +41,10 @@ li {
 <script>
 $(function() {
 	$("input[type='text']").change(function(event) {
+		var action = $("form").attr("action");
 		$("[name='changed']").eq(1).val($("[name='changed']").eq(0).val());
 		$("[name='changed']").eq(0).val($(event.target).attr("name"));
+		$("form").attr("action", action + "/calc/").submit();
 	});
 });
 </script>

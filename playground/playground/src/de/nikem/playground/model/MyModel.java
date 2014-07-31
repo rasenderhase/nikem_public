@@ -64,6 +64,7 @@ public class MyModel extends Model {
 	};
 
 	private List<String> changed;
+	private String action = ".";
 
 	public MyModel() {
 		anzahl.setModel(this);
@@ -186,5 +187,13 @@ public class MyModel extends Model {
 
 	public void setChanged(List<String> changed) {
 		this.changed = changed;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
 	}
 }

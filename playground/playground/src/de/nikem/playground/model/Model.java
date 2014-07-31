@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Model {
-	private Map<String, Object> persistent;
+	private Map<String, Object> persistent = new HashMap<String, Object>();
 	private final Map<String, String> display = new HashMap<String, String>();
 	private final Formatter string = new Formatter();
 

@@ -26,6 +26,7 @@ public class ModelResource {
 	}
 
 	@GET
+	@Path("/")
 	public Object get() {
 		Model model = new MyModel();
 		model.setPersistent(loadData());
@@ -43,6 +44,20 @@ public class ModelResource {
 			model.calculate();
 			saveData(model.getPersistent());
 		}
+
+		return new Viewable("/rest/model", model);
+	}
+
+	@POST()
+	@Path("calc")
+	public Object calc(MultivaluedMap<String, String> form) {
+		MyModel model = new MyModel();
+
+		model.setClientData(form);
+		if (model.validate()) {
+			model.calculate();
+		}
+		model.setAction("..");
 
 		return new Viewable("/rest/model", model);
 	}
