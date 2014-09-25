@@ -167,3 +167,4 @@ exports.StapelIljig = StapelIljig;
 exports.GeberIljig = GeberIljig;
 exports.HandSorterIljig = HandSorterIljig;
 exports.Spieler = k.Spieler;
+exports.Karte = k.Karte;

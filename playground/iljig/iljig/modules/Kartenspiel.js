@@ -21,6 +21,14 @@ Karte.prototype = Object.create(Object.prototype, {
         {
             return "Karte[" + this.farbe + "-" + this.wert + "]";
         }
+    },
+    toDb : {
+        value : function() {
+            return {
+                farbe : this.farbe,
+                wert : this.wert
+            }
+        }
     }
 });
 
@@ -87,7 +95,8 @@ Spieler = function(id, name, spielId) {
     this.name = name;
     this.spielId = spielId;
     this.id = id || u.Util.uuid();
-    this.nummer;
+    this.nummer = null;
+    this.hand = [];
 };
 
 Spieler.prototype = Object.create(Object.prototype, {

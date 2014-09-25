@@ -72,12 +72,27 @@ SpielIljig.prototype = Object.create(Object.prototype, {
     },
     starten : {
         value : function () {
+            var stapel, geber, handSorter, einSpieler, i;
+
             if (this.spieler.length < k.GeberIljig.SPIELER_ANZAHL_KARTEN.minAnzahl) {
                 throw {
                     name : "ZuWenigeSpieler",
                     message : "Es müssen mindestens " + k.GeberIljig.SPIELER_ANZAHL_KARTEN.minAnzahl + " Spieler mitspielen."
                 }
             } else if (this.status === s.SpielIljig.STATUS.angelegt) {
+                stapel = new k.StapelIljig();
+                geber = new k.GeberIljig();
+                geber.gib(stapel, this.spieler);
+                handSorter = new k.HandSorterIljig(stapel.getTrumpf());
+
+                for (i in this.spieler) {
+                    einSpieler = this.spieler[i];
+                    einSpieler.handSorter = handSorter;
+                    einSpieler.sortHand();
+                    console.log("" + einSpieler);
+                }
+                console.log("" + stapel);
+
                 this.status = s.SpielIljig.STATUS.gestartet;
             }
         }

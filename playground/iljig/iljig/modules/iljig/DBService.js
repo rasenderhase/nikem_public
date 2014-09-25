@@ -58,7 +58,7 @@ DbService.prototype = Object.create(Object.prototype, {
                     this.db.spiel[id].lastAccess = Date.now();
                     spiel.extend(this.db.spiel[id]);                //Persistierte Daten überbraten
 
-                    spielerList = this.getSpielerBySpiel(id);
+                    spielerList = this.getSpielerBySpiel(id);       //im DB-Service synchroner Aufruf
                     spiel.spieler = spielerList;
                     result = spiel;
                 }
@@ -163,6 +163,38 @@ DbService.prototype = Object.create(Object.prototype, {
                     }
                 }
                 result = spielerList;
+            } catch (e) {err = e;}
+            if (callback) callback(err, result);
+            return result;
+        }
+    },
+    saveSpielerKarten : {
+        value : function (/* Spieler */ spieler, /* function */ callback) {
+            var err = null, i, karte;
+            try {
+                this.db.spielerKarten[spieler.id] = [];
+                for (i in spieler.hand) {
+                    karte = spieler.hand[i];
+                    this.db.spielerKarten[spieler.id].push(karte.toDb());
+                }
+            } catch (e) {err = e;}
+            if (callback) callback(err);
+        }
+    },
+    getSpielerKarten : {
+        value : function(/* Spieler */ spieler, /* function */ callback) {
+            var karten, karte, i,
+                err = null,
+                result = null;
+            try {
+                karten = this.db.spielerKarten[spieler.id];
+                if (karten) {
+                    for (i in karten) {
+                        karte = new k.Karte();
+                        karte.extend(karten[i]);
+                        spieler.addHandKarte(karte);
+                    }
+                }
             } catch (e) {err = e;}
             if (callback) callback(err, result);
             return result;

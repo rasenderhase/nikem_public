@@ -45,7 +45,7 @@ exports.save = function(req, res, next){
         adminGeheimnis = req.param("adminGeheimnis"),
         spiel = req.atts.spiel,
         status = spiel ? spiel.status : null,
-        callback;
+        callback, i;
 
     callback = function() {
         res.header("location", req.path);
@@ -64,6 +64,9 @@ exports.save = function(req, res, next){
                 && req.body.status === s.SpielIljig.STATUS.gestartet) {
                 spiel.starten();
                 dbService.saveSpiel(spiel, handle(callback));
+                for (i in spiel.spieler) {
+                    dbService.saveSpielerKarten(spiel.spieler[i], handle(callback));
+                }
             } else next();
             break;
         default:
