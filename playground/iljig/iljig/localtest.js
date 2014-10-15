@@ -36,7 +36,8 @@ console.log("" + andi);
 console.log("" + martin);
 
 console.dir(spiel);
-dbService.saveSpiel(spiel);
-spiel = dbService.getSpiel(spiel.id);
 
-console.dir(spiel);
+//Synchrone Abarbeitung. 1. saveSpiel, 2. getSpiel
+var z = dbService.saveSpiel(spiel).done(dbService.getSpiel(spiel.id).done(function (res) {
+    console.dir(res);
+}));

@@ -14,9 +14,11 @@
  * spielerStich -- 1:n -- spielerStichkarten (von einem Spieler in einem Stich gespielte Karten)
  */
 
-var DbService, s;
+var DbService, s, u, Promise;
 s = require("./SpielIljig.js"),
-k = require("./KartenspielIljig.js");
+k = require("./KartenspielIljig.js"),
+Promise = require('promise'),
+u = require("../Util.js").Util;
 
 DbService = function() {
     this.db = {
@@ -34,186 +36,201 @@ DbService = function() {
 
 DbService.prototype = Object.create(Object.prototype, {
     saveSpiel : {
-        value : function(/* SpielIljig */ spiel, /* function */ callback) {
-            var err = null;
-            try {
-                spiel.lastAccess = Date.now();
-                this.db.spiel[spiel.id] = spiel.toDb();
-                if (!this.db.index.spielSpieler[spiel.id]) {
-                    this.db.index.spielSpieler[spiel.id] = {};
-                }
-            } catch (e) {err = e;}
-            if (callback) callback(err);
+        value : function(/* SpielIljig */ spiel) {
+            return new Promise(function (/* function */ resolve, /* function */ reject) {
+                try {
+                    spiel.lastAccess = Date.now();
+                    this.db.spiel[spiel.id] = spiel.toDb();
+                    if (!this.db.index.spielSpieler[spiel.id]) {
+                        this.db.index.spielSpieler[spiel.id] = {};
+                    }
+                    console.log("saveSpiel -> resolve");
+                    resolve();
+                } catch (e) { reject(e); }
+            }.bind(this));      //fn.bind(this) entspricht $.proxy(fn, this)
         }
     },
-    getSpiel : {
-        value : function(/* String */ id, /* function */ callback) {
-            var spiel, spielerList, i = null,
-                err = null,
-                result = null;
-            try {
-                this.deleteAlteSpiele(s.SpielIljig.MAX_SPIEL_ALTER);
-                if (this.db.spiel[id]) {
-                    spiel = new s.SpielIljig();
-                    this.db.spiel[id].lastAccess = Date.now();
-                    spiel.extend(this.db.spiel[id]);                //Persistierte Daten überbraten
 
-                    spielerList = this.getSpielerBySpiel(id);       //im DB-Service synchroner Aufruf
-                    spiel.spieler = spielerList;
-                    result = spiel;
-                }
-            } catch (e) {err = e;}
-            if (callback) callback(err, result);
-            return result;
+    getSpiel : {
+        value : function(/* String */ id) {
+            return new Promise(function (/* function */ resolve, /* function */ reject) {
+                var spiel, spielerList, i = null,
+                    result = null;
+                try {
+                    this.deleteAlteSpiele(s.SpielIljig.MAX_SPIEL_ALTER);
+
+                    //asynchrone Verarbeitung starten...
+                    this.getSpielerBySpiel(id).done(function (results) {
+
+                        if (this.db.spiel[id]) {
+                            spiel = new s.SpielIljig();
+                            this.db.spiel[id].lastAccess = Date.now();
+                            spiel.extend(this.db.spiel[id]);                //Persistierte Daten überbraten
+
+                            spiel.spieler = results;
+                            result = spiel;
+                        }
+
+                        console.log("getSpiel -> resolve");
+                        resolve(result);
+                    }.bind(this), u.err());
+
+                } catch (e) { reject(e); }
+            }.bind(this));
         }
     },
     getSpielList : {
-        value : function(/* function */ callback) {
-            var i, list = [],
-                spiel,
-                spielerList,
-                err = null,
-                result = null;
+        value : function() {
+            return new Promise(function (/* function */ resolve, /* function */ reject) {
+                var i, list = [],
+                    spiel,
+                    spielerList,
+                    err = null,
+                    result = null;
 
-            try {
-                this.deleteAlteSpiele(s.SpielIljig.MAX_SPIEL_ALTER);
-                for (i in this.db.spiel) {
-                    if (this.db.spiel.hasOwnProperty(i)) {
-                        spiel = new s.SpielIljig();
-                        spiel.extend(this.db.spiel[i]);
+                try {
+                    this.deleteAlteSpiele(s.SpielIljig.MAX_SPIEL_ALTER);
 
-                        spielerList = this.getSpielerBySpiel(spiel.id);
-                        spiel.spieler = spielerList;
-                        list.push(spiel);
-                    }
-                }
-                result = list;
-            } catch (e) {err = e;}
-            if (callback) callback(err, result);
-            return result;
-        }
-    },
-    deleteAlteSpiele : {
-        value : function(/* Date */ maxAlterMs, /* function */ callback) {
-            var err = null, i = null, j= null, spiel, index,
-                minDate = Date.now() - maxAlterMs;
-            try {
-                for (i in this.db.spiel) {
-                    if (this.db.spiel.hasOwnProperty(i)) {
-                        if (this.db.spiel[i].lastAccess < minDate) {
-                            spiel = this.db.spiel[i];
-                            index = this.db.index.spielSpieler[spiel.id];
-                            for (j in index) {
-                                if (index.hasOwnProperty(j)) {
-                                    delete this.db.spieler[j];
-                                }
-                            }
+                    for (i in this.db.spiel) {
+                        if (this.db.spiel.hasOwnProperty(i)) {
+                            spiel = new s.SpielIljig();
+                            spiel.extend(this.db.spiel[i]);
 
-                            delete spiel;
+                            spielerList = this.getSpielerBySpiel(spiel.id);
+                            spiel.spieler = spielerList;
+                            list.push(spiel);
                         }
                     }
-                }
-            } catch (e) {err = e;}
-            if (callback) callback(err);
+                    result = list;
+                    console.log("getSpielList -> resolve");
+                    resolve(result);
+                } catch (e) { reject(e); }
+            }.bind(this));
+        }
+    },
+
+    deleteAlteSpiele : {
+        value : function(/* Date */ maxAlterMs) {
+            return new Promise(function (/* function */ resolve, /* function */ reject) {
+                var err = null, i = null, j= null, spiel, index,
+                    minDate = Date.now() - maxAlterMs;
+                try {
+                    for (i in this.db.spiel) {
+                        if (this.db.spiel.hasOwnProperty(i)) {
+                            if (this.db.spiel[i].lastAccess < minDate) {
+                                spiel = this.db.spiel[i];
+                                index = this.db.index.spielSpieler[spiel.id];
+                                for (j in index) {
+                                    if (index.hasOwnProperty(j)) {
+                                        delete this.db.spieler[j];
+                                    }
+                                }
+
+                                delete spiel;
+                            }
+                        }
+                    }
+                    console.log("deleteAlteSpiele -> resolve");
+                    resolve();
+                } catch (e) { reject(e); }
+            }.bind(this));
         }
     },
 
     saveSpieler : {
-        value : function(/* k.Spieler */ spieler, /* function */ callback) {
-            var err = null;
-            try {
-                this.db.spieler[spieler.id] = spieler.toDb();
-                this.db.index.spielSpieler[spieler.spielId][spieler.id] = spieler.id;
-            } catch (e) {err = e;}
-            if (callback) callback(err);
+        value : function(/* k.Spieler */ spieler) {
+            return new Promise(function (/* function */ resolve, /* function */ reject) {
+                var err = null;
+                try {
+                    this.db.spieler[spieler.id] = spieler.toDb();
+                    this.db.index.spielSpieler[spieler.spielId][spieler.id] = spieler.id;
+                    console.log("saveSpieler -> resolve");
+                    resolve();
+                } catch (e) { reject(e); }
+               }.bind(this));
         }
     },
     getSpieler : {
-        value : function(/* String */ id, /* function */ callback) {
-            var spieler,
-                err = null,
-                result = null;
-            try {
-                if (this.db.spieler[id]) {
-                    spieler = new k.Spieler();
-                    spieler.extend(this.db.spieler[id]);
-                    result = spieler;
-                }
-            } catch (e) {err = e;}
-            if (callback) callback(err, result);
-            return result;
+        value : function(/* String */ id) {
+            return new Promise(function (/* function */ resolve, /* function */ reject) {
+                var spieler,
+                    err = null,
+                    result = null;
+                try {
+                    if (this.db.spieler[id]) {
+                        spieler = new k.Spieler();
+                        spieler.extend(this.db.spieler[id]);
+                        result = spieler;
+                    }
+
+                    console.log("getSpieler -> resolve");
+                    resolve(result);
+                } catch (e) { reject(e); }
+            }.bind(this));
         }
     },
     getSpielerBySpiel : {
-        value : function(/* String */ spielId, /* function */ callback) {
-            var spielerList = [],
-                spieler,
-                spielIndex,
-                spielerId,
-                err = null,
-                result = null;
-            try {
-                spielIndex = this.db.index.spielSpieler[spielId];
-                for (spielerId in spielIndex) {
-                    if (spielIndex.hasOwnProperty(spielerId)) {
-                        spieler = new k.Spieler();
-                        spieler.extend(this.db.spieler[spielerId]);
-                        spielerList.push(spieler);
-                        spielerList.sort(function (a, b) { return a.nummer - b.nummer});
+        value : function(/* String */ spielId) {
+            return new Promise(function (/* function */ resolve, /* function */ reject) {
+                var spielerList = [],
+                    spieler,
+                    spielIndex,
+                    spielerId,
+                    err = null,
+                    result = null;
+                try {
+                    spielIndex = this.db.index.spielSpieler[spielId];
+                    for (spielerId in spielIndex) {
+                        if (spielIndex.hasOwnProperty(spielerId)) {
+                            spieler = new k.Spieler();
+                            spieler.extend(this.db.spieler[spielerId]);
+                            spielerList.push(spieler);
+                            spielerList.sort(function (a, b) { return a.nummer - b.nummer});
+                        }
                     }
-                }
-                result = spielerList;
-            } catch (e) {err = e;}
-            if (callback) callback(err, result);
-            return result;
+                    result = spielerList;
+                    console.log("getSpielerBySpiel -> resolve");
+                    resolve(result);
+                } catch (e) { reject(e); }
+            }.bind(this));
         }
     },
     saveSpielerKarten : {
-        value : function (/* Spieler */ spieler, /* function */ callback) {
-            var err = null, i, karte;
-            try {
-                this.db.spielerKarten[spieler.id] = [];
-                for (i in spieler.hand) {
-                    karte = spieler.hand[i];
-                    this.db.spielerKarten[spieler.id].push(karte.toDb());
-                }
-            } catch (e) {err = e;}
-            if (callback) callback(err);
+        value : function (/* Spieler */ spieler) {
+            return new Promise(function (/* function */ resolve, /* function */ reject) {
+                var err = null, i, karte;
+                try {
+                    this.db.spielerKarten[spieler.id] = [];
+                    for (i in spieler.hand) {
+                        karte = spieler.hand[i];
+                        this.db.spielerKarten[spieler.id].push(karte.toDb());
+                    }
+                    console.log("saveSpielerKarten -> resolve");
+                    resolve();
+                } catch (e) { reject(e); }
+            }.bind(this));
         }
     },
     getSpielerKarten : {
-        value : function(/* Spieler */ spieler, /* function */ callback) {
-            var karten, karte, i,
-                err = null,
-                result = null;
-            try {
-                karten = this.db.spielerKarten[spieler.id];
-                if (karten) {
-                    for (i in karten) {
-                        karte = new k.Karte();
-                        karte.extend(karten[i]);
-                        spieler.addHandKarte(karte);
+        value : function(/* Spieler */ spieler) {
+            return new Promise(function (/* function */ resolve, /* function */ reject) {
+                var karten, karte, i,
+                    err = null,
+                    result = null;
+                try {
+                    karten = this.db.spielerKarten[spieler.id];
+                    if (karten) {
+                        for (i in karten) {
+                            karte = new k.Karte();
+                            karte.extend(karten[i]);
+                            spieler.addHandKarte(karte);
+                        }
                     }
-                }
-            } catch (e) {err = e;}
-            if (callback) callback(err, result);
-            return result;
-        }
-    },
-
-    /**
-     * Default handler for function (err, result) type callbacks.
-     */
-    handle : {
-        value : function (/* function */ success, /* function */ fail) {
-            return function (err, result) {
-                if (err) {
-                    if (fail) fail(err);
-                    else throw err;
-                } else {
-                    success(result);
-                }
-            }
+                    result = spieler;
+                    console.log("getSpielerKarten -> resolve");
+                    resolve(result);
+                } catch (e) { reject(e); }
+            }.bind(this));
         }
     }
 });

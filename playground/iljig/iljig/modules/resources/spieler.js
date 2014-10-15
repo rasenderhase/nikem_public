@@ -6,25 +6,24 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var dbService = require("../iljig/DBService.js").dbService
-    handle = dbService.handle;
+var dbService = require("../iljig/DBService.js").dbService,
+    Promise = require("promise"),
+    u = require("../Util.js").Util;
 
 exports.load = function(req, res, next){
     var spielerId = req.param("spieler_id"),
-        spielId = req.param("spiel_id"),
-        spielCallback;
+        spielId = req.param("spiel_id");
 
-    spielCallback = function(spiel) {
-        dbService.getSpieler(spielerId, handle(function (spieler) {
+    Promise.all([
+        dbService.getSpiel(spielId),
+        dbService.getSpieler(spielerId)
+    ]).done(function (results) {
             req.atts = {
-                spiel : spiel,
-                spieler : spieler
+                spiel : results[0],
+                spieler : results[1]
             };
             next();
-        }));
-    };
-
-    dbService.getSpiel(spielId, handle(spielCallback));
+        }, u.err(next));
 };
 
 exports.save = function(req, res, next){
@@ -51,8 +50,8 @@ exports.save = function(req, res, next){
         spiel.addSpieler(spieler);                              //TODO ???
         req.atts.spieler = spieler;
         res.status(201);
-        dbService.saveSpieler(spieler, handle(callback));
-    } else callback(null);
+        dbService.saveSpieler(spieler).done(callback, u.err(next));
+    } else callback();
 };
 
 exports.view = function(req, res){

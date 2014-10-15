@@ -11,7 +11,7 @@ var dbService = require("../iljig/DBService.js").dbService,
     k = require("../iljig/KartenspielIljig.js"),
     u = require("../Util.js").Util,
     url = require("url"),
-    handle = dbService.handle;
+    Promise = require("promise");
 
 exports.home = function(req, res) {
     var spielId = u.uuid(),
@@ -32,12 +32,12 @@ exports.home = function(req, res) {
 exports.load = function(req, res, next){
     var id = req.param("spiel_id");
 
-    dbService.getSpiel(id, handle(function (spiel) {
+    dbService.getSpiel(id).done(function (spiel) {
         req.atts = {
             spiel : spiel
         };
         next();
-    }));
+    }, u.err(next));
 };
 
 exports.save = function(req, res, next){
@@ -45,7 +45,7 @@ exports.save = function(req, res, next){
         adminGeheimnis = req.param("adminGeheimnis"),
         spiel = req.atts.spiel,
         status = spiel ? spiel.status : null,
-        callback, i;
+        callback, i, promises = [];
 
     callback = function() {
         res.header("location", req.path);
@@ -57,16 +57,17 @@ exports.save = function(req, res, next){
             spiel = new s.SpielIljig(id, adminGeheimnis);
             req.atts.spiel = spiel;
             res.status(201);
-            dbService.saveSpiel(spiel, handle(callback));
+            dbService.saveSpiel(spiel).done(callback, u.err(next));
             break;
         case s.SpielIljig.STATUS.angelegt:
             if (adminGeheimnis === spiel.adminGeheimnis
                 && req.body.status === s.SpielIljig.STATUS.gestartet) {
                 spiel.starten();
-                dbService.saveSpiel(spiel, handle(callback));
+                promises.push(dbService.saveSpiel(spiel));
                 for (i in spiel.spieler) {
-                    dbService.saveSpielerKarten(spiel.spieler[i], handle(callback));
+                    promises.push(dbService.saveSpielerKarten(spiel.spieler[i]));
                 }
+                Promise.all(promises).done(callback, u.err(next));
             } else next();
             break;
         default:
@@ -104,14 +105,14 @@ exports.view = function(req, res){
 exports.list = function(req, res) {
     res.format({
         html : function() {
-            dbService.getSpielList(handle(function (spielList) {
+            dbService.getSpielList().done(function (spielList) {
                 res.render("spiellist", {
                     spielList : spielList
                 });
-            }));
+            }, u.err());
         },
         json : function() {
-            dbService.getSpielList(handle(function (spielList) {
+            dbService.getSpielList().done(function (spielList) {
                 var i, json = [];
                 for (i = 0; i < spielList.length; i++) {
                     json[i] = {
@@ -122,7 +123,7 @@ exports.list = function(req, res) {
                     }
                 }
                 res.json(json);
-            }));
+            }, u.err());
         }
     });
 };
